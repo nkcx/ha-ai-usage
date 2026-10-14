@@ -12,6 +12,7 @@ from collections.abc import AsyncIterator, Mapping, Sequence
 import contextlib
 from dataclasses import dataclass
 import os
+import signal
 from typing import Protocol
 
 #: Output beyond this is cut off; usage reports are a few kilobytes.
@@ -99,6 +100,9 @@ class SubprocessRunner:
                 env=self._env,
                 cwd=self._cwd,
                 limit=MAX_OUTPUT,
+                # Own process group, so stopping it also stops helper processes
+                # the CLI started (which would otherwise keep its pipes open).
+                start_new_session=True,
             )
         except FileNotFoundError as err:
             raise CommandNotFoundError(argv[0]) from err
@@ -114,36 +118,45 @@ class SubprocessRunner:
         process = await self._start(argv, stdin=asyncio.subprocess.DEVNULL)
         assert process.stdout is not None
         assert process.stderr is not None
+        out_stream, err_stream = process.stdout, process.stderr
         stdout, stderr = bytearray(), bytearray()
         phrases = [phrase.encode() for phrase in abort_on]
-        aborted = False
+        abort = asyncio.Event()
 
         async def pump(stream: asyncio.StreamReader, buffer: bytearray) -> None:
-            nonlocal aborted
             while chunk := await stream.read(65536):
                 if len(buffer) < MAX_OUTPUT:
                     buffer.extend(chunk[: MAX_OUTPUT - len(buffer)])
-                if not aborted and any(p in stdout or p in stderr for p in phrases):
-                    aborted = True
-                    with contextlib.suppress(ProcessLookupError):
-                        process.terminate()
+                if any(p in stdout or p in stderr for p in phrases):
+                    abort.set()
 
+        async def finish() -> None:
+            await asyncio.gather(pump(out_stream, stdout), pump(err_stream, stderr))
+            await process.wait()
+
+        finished = asyncio.create_task(finish())
+        aborted = asyncio.create_task(abort.wait())
         try:
             async with asyncio.timeout(time_limit):
-                await asyncio.gather(
-                    pump(process.stdout, stdout), pump(process.stderr, stderr)
+                await asyncio.wait(
+                    {finished, aborted}, return_when=asyncio.FIRST_COMPLETED
                 )
-                await process.wait()
+                if abort.is_set():
+                    await _stop(process)
         except TimeoutError:
             await _stop(process)
             raise CommandTimeoutError(
                 stdout.decode(errors="replace"), stderr.decode(errors="replace")
             ) from None
+        finally:
+            for task in (finished, aborted):
+                task.cancel()
+            await asyncio.gather(finished, aborted, return_exceptions=True)
         return CommandResult(
             returncode=process.returncode or 0,
             stdout=stdout.decode(errors="replace"),
             stderr=stderr.decode(errors="replace"),
-            aborted=aborted,
+            aborted=abort.is_set(),
         )
 
     @contextlib.asynccontextmanager
@@ -172,17 +185,20 @@ class _ProcessSession:
 
 
 async def _stop(process: asyncio.subprocess.Process) -> None:
-    """Stop a process: close stdin, then terminate, then kill."""
-    if process.returncode is not None:
-        return
+    """Stop a process and its group: close stdin, then terminate, then kill."""
     if process.stdin is not None:
         process.stdin.close()
-    with contextlib.suppress(ProcessLookupError):
-        process.terminate()
+    _signal_group(process, signal.SIGTERM)
     try:
         async with asyncio.timeout(5):
             await process.wait()
     except TimeoutError:
-        with contextlib.suppress(ProcessLookupError):
-            process.kill()
+        _signal_group(process, signal.SIGKILL)
         await process.wait()
+    # Helpers may outlive the main process; make sure they're gone too.
+    _signal_group(process, signal.SIGKILL)
+
+
+def _signal_group(process: asyncio.subprocess.Process, sig: signal.Signals) -> None:
+    with contextlib.suppress(ProcessLookupError, PermissionError):
+        os.killpg(process.pid, sig)

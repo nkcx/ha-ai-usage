@@ -1,5 +1,6 @@
 """Tests for the subprocess runner, with real subprocesses."""
 
+import asyncio
 from pathlib import Path
 import sys
 
@@ -103,3 +104,20 @@ async def test_run_abort_on_not_seen() -> None:
     )
     assert not result.aborted
     assert len(result.stdout) == 100001
+
+
+async def test_run_abort_stops_helpers_holding_pipes() -> None:
+    """A helper process keeping the pipes open doesn't keep the run waiting."""
+    script = (
+        "import subprocess, sys, time\n"
+        "subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])\n"
+        "print('Authentication required', file=sys.stderr, flush=True)\n"
+        "time.sleep(60)\n"
+    )
+    loop = asyncio.get_running_loop()
+    start = loop.time()
+    result = await SubprocessRunner().run(
+        [PYTHON, "-c", script], time_limit=20, abort_on=("Authentication required",)
+    )
+    assert result.aborted
+    assert loop.time() - start < 10
