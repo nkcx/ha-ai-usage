@@ -1,0 +1,11 @@
+name: AI Usage
+version: "0.0.1"
+slug: ai_usage
+description: Collects AI subscription usage from the official CLIs for the AI Usage integration
+url: https://github.com/nkcx/ha-ai-usage
+arch:
+  - amd64
+  - aarch64
+init: false
+startup: application
+boot: auto
