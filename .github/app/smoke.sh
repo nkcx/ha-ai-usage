@@ -11,9 +11,11 @@ on_exit() {
     status=$?
     docker logs ai-usage-smoke 2>&1 | tail -60
     if [ "$status" -ne 0 ]; then
-        echo "--- agy /usage run directly in the container:"
+        echo "--- agy /usage through the app's runner, in the container:"
+        docker exec -i ai-usage-smoke python3 - < "$(dirname "$0")/debug_agy.py" 2>&1 | tail -40
+        echo "--- agy /usage run directly (stdin closed), in the container:"
         docker exec ai-usage-smoke sh -c \
-            'cd /data/work && timeout 30 agy -p /usage --output-format json; echo "exit $?"' 2>&1 | tail -30
+            'cd /data/work && s=$(date +%s); timeout 90 agy -p /usage --output-format json </dev/null; echo "exit $? after $(( $(date +%s) - s ))s"' 2>&1 | tail -30
     fi
     docker rm -f ai-usage-smoke >/dev/null
 }
