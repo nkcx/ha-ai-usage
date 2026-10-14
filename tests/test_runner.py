@@ -6,6 +6,7 @@ import sys
 
 import pytest
 
+from custom_components.ai_usage.core import runner
 from custom_components.ai_usage.core.runner import (
     CommandNotFoundError,
     CommandTimeoutError,
@@ -120,4 +121,39 @@ async def test_run_abort_stops_helpers_holding_pipes() -> None:
         [PYTHON, "-c", script], time_limit=20, abort_on=("Authentication required",)
     )
     assert result.aborted
+    assert loop.time() - start < 10
+
+
+async def test_run_helper_in_own_session_holding_output() -> None:
+    """A helper outside the process group, holding stdout, doesn't block."""
+    script = (
+        "import subprocess, sys\n"
+        "subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'],"
+        " start_new_session=True)\n"
+        "print('done', flush=True)\n"
+    )
+    loop = asyncio.get_running_loop()
+    start = loop.time()
+    result = await SubprocessRunner().run([PYTHON, "-c", script], time_limit=20)
+    assert result.stdout == "done\n"
+    assert loop.time() - start < 10
+
+
+async def test_session_stop_with_helper_holding_pipes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Stopping a session doesn't hang on a helper that holds its pipes."""
+    monkeypatch.setattr(runner, "STOP_GRACE", 0.5)
+    script = (
+        "import signal, subprocess, sys, time\n"
+        "signal.signal(signal.SIGTERM, signal.SIG_IGN)\n"
+        "subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'],"
+        " start_new_session=True)\n"
+        "print('ready', flush=True)\n"
+        "time.sleep(60)\n"
+    )
+    loop = asyncio.get_running_loop()
+    start = loop.time()
+    async with SubprocessRunner().session([PYTHON, "-c", script]) as session:
+        assert await session.readline() == "ready\n"
     assert loop.time() - start < 10

@@ -13,10 +13,15 @@ import contextlib
 from dataclasses import dataclass
 import os
 import signal
-from typing import Protocol
+import tempfile
+from typing import IO, Protocol
 
 #: Output beyond this is cut off; usage reports are a few kilobytes.
 MAX_OUTPUT = 4 * 1024 * 1024
+#: How often a running command's output is checked for ``abort_on`` phrases.
+POLL_INTERVAL = 0.25
+#: Seconds a command gets to exit after SIGTERM, then after SIGKILL.
+STOP_GRACE = 5.0
 
 
 class CommandNotFoundError(Exception):
@@ -89,19 +94,24 @@ class SubprocessRunner:
         self._cwd = cwd
 
     async def _start(
-        self, argv: Sequence[str], *, stdin: int | None
+        self,
+        argv: Sequence[str],
+        *,
+        stdin: int | None,
+        stdout: int | IO[bytes] = asyncio.subprocess.PIPE,
+        stderr: int | IO[bytes] = asyncio.subprocess.PIPE,
     ) -> asyncio.subprocess.Process:
         try:
             return await asyncio.create_subprocess_exec(
                 *argv,
                 stdin=stdin,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
+                stdout=stdout,
+                stderr=stderr,
                 env=self._env,
                 cwd=self._cwd,
                 limit=MAX_OUTPUT,
                 # Own process group, so stopping it also stops helper processes
-                # the CLI started (which would otherwise keep its pipes open).
+                # the CLI started.
                 start_new_session=True,
             )
         except FileNotFoundError as err:
@@ -114,50 +124,43 @@ class SubprocessRunner:
         time_limit: float,
         abort_on: Sequence[str] = (),
     ) -> CommandResult:
-        """Run a command to completion (see ``CommandRunner.run``)."""
-        process = await self._start(argv, stdin=asyncio.subprocess.DEVNULL)
-        assert process.stdout is not None
-        assert process.stderr is not None
-        out_stream, err_stream = process.stdout, process.stderr
-        stdout, stderr = bytearray(), bytearray()
+        """Run a command to completion (see ``CommandRunner.run``).
+
+        Output goes to temporary files rather than pipes: a helper process the
+        CLI leaves behind could hold a pipe open and keep the run waiting.
+        """
         phrases = [phrase.encode() for phrase in abort_on]
-        abort = asyncio.Event()
-
-        async def pump(stream: asyncio.StreamReader, buffer: bytearray) -> None:
-            while chunk := await stream.read(65536):
-                if len(buffer) < MAX_OUTPUT:
-                    buffer.extend(chunk[: MAX_OUTPUT - len(buffer)])
-                if any(p in stdout or p in stderr for p in phrases):
-                    abort.set()
-
-        async def finish() -> None:
-            await asyncio.gather(pump(out_stream, stdout), pump(err_stream, stderr))
-            await process.wait()
-
-        finished = asyncio.create_task(finish())
-        aborted = asyncio.create_task(abort.wait())
-        try:
-            async with asyncio.timeout(time_limit):
-                await asyncio.wait(
-                    {finished, aborted}, return_when=asyncio.FIRST_COMPLETED
-                )
-                if abort.is_set():
-                    await _stop(process)
-        except TimeoutError:
-            await _stop(process)
-            raise CommandTimeoutError(
-                stdout.decode(errors="replace"), stderr.decode(errors="replace")
-            ) from None
-        finally:
-            for task in (finished, aborted):
-                task.cancel()
-            await asyncio.gather(finished, aborted, return_exceptions=True)
-        return CommandResult(
-            returncode=process.returncode or 0,
-            stdout=stdout.decode(errors="replace"),
-            stderr=stderr.decode(errors="replace"),
-            aborted=abort.is_set(),
-        )
+        with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
+            process = await self._start(
+                argv, stdin=asyncio.subprocess.DEVNULL, stdout=out, stderr=err
+            )
+            aborted = False
+            try:
+                async with asyncio.timeout(time_limit):
+                    while process.returncode is None:
+                        with contextlib.suppress(TimeoutError):
+                            async with asyncio.timeout(POLL_INTERVAL):
+                                await process.wait()
+                        if phrases and process.returncode is None:
+                            text = _read(out) + _read(err)
+                            if any(phrase in text for phrase in phrases):
+                                aborted = True
+                                await _stop(process)
+            except TimeoutError:
+                await _stop(process)
+                raise CommandTimeoutError(
+                    _read(out).decode(errors="replace"),
+                    _read(err).decode(errors="replace"),
+                ) from None
+            finally:
+                # Leftover helpers in the group don't outlive the run.
+                _signal_group(process, signal.SIGKILL)
+            return CommandResult(
+                returncode=process.returncode or 0,
+                stdout=_read(out).decode(errors="replace"),
+                stderr=_read(err).decode(errors="replace"),
+                aborted=aborted,
+            )
 
     @contextlib.asynccontextmanager
     async def session(self, argv: Sequence[str]) -> AsyncIterator[LineSession]:
@@ -184,18 +187,26 @@ class _ProcessSession:
         return line.decode(errors="replace") if line else None
 
 
+def _read(file: IO[bytes]) -> bytes:
+    """Return what has been written to ``file`` so far (up to MAX_OUTPUT)."""
+    return os.pread(file.fileno(), MAX_OUTPUT, 0)
+
+
 async def _stop(process: asyncio.subprocess.Process) -> None:
     """Stop a process and its group: close stdin, then terminate, then kill."""
     if process.stdin is not None:
         process.stdin.close()
     _signal_group(process, signal.SIGTERM)
     try:
-        async with asyncio.timeout(5):
+        async with asyncio.timeout(STOP_GRACE):
             await process.wait()
     except TimeoutError:
         _signal_group(process, signal.SIGKILL)
-        await process.wait()
-    # Helpers may outlive the main process; make sure they're gone too.
+        # With pipes, waiting can hang on a helper outside the group holding
+        # them open; the process itself is gone, so stop waiting.
+        with contextlib.suppress(TimeoutError):
+            async with asyncio.timeout(STOP_GRACE):
+                await process.wait()
     _signal_group(process, signal.SIGKILL)
 
 
