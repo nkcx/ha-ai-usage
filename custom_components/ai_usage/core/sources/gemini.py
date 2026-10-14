@@ -16,7 +16,10 @@ USAGE = ("-p", "/usage", "--output-format", "json")
 CREDITS = ("-p", "/credits", "--output-format", "json")
 
 _WINDOWS = {"5h": (FIVE_HOURS, "5-hour"), "weekly": (ONE_WEEK, "weekly")}
+#: Printed (on stderr) by agy when it isn't signed in; it then waits for a code.
+AUTH_PROMPT = "Authentication required"
 _SIGNED_OUT_HINTS = (
+    "authentication",
     "sign in",
     "signin",
     "log in",
@@ -52,6 +55,8 @@ class GeminiSource(CliSource):
 
 
 def _command_data(stdout: str, stderr: str, name: str) -> dict[str, Any]:
+    if AUTH_PROMPT in stderr:
+        raise SourceError(Status.SIGNED_OUT, "The Antigravity CLI is not signed in")
     try:
         result = json.loads(stdout)
     except json.JSONDecodeError:

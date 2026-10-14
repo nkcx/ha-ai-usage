@@ -79,3 +79,25 @@ async def test_session_not_found() -> None:
     with pytest.raises(CommandNotFoundError):
         async with SubprocessRunner().session(["/nonexistent/ai-usage-cli"]):
             pass  # pragma: no cover
+
+
+async def test_run_abort_on() -> None:
+    """A command waiting at a prompt is stopped as soon as the prompt appears."""
+    script = (
+        "import sys, time\n"
+        "print('Authentication required. Visit the URL', file=sys.stderr, flush=True)\n"
+        "time.sleep(30)\n"
+    )
+    result = await SubprocessRunner().run(
+        [PYTHON, "-c", script], time_limit=20, abort_on=("Authentication required",)
+    )
+    assert result.aborted
+    assert "Authentication required" in result.stderr
+
+
+async def test_run_abort_on_not_seen() -> None:
+    result = await SubprocessRunner().run(
+        [PYTHON, "-c", "print('x' * 100000)"], time_limit=20, abort_on=("never",)
+    )
+    assert not result.aborted
+    assert len(result.stdout) == 100001

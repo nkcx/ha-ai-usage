@@ -259,12 +259,27 @@ async def test_gemini_unknown_window() -> None:
     "usage",
     [
         json.dumps({"status": "ERROR", "response": "Please sign in to continue"}),
+        json.dumps({"status": "ERROR", "error": "authentication failed or timed out"}),
         "Error: not authenticated, run agy to log in",
     ],
 )
 async def test_gemini_signed_out(usage: str) -> None:
     report = await GeminiSource(gemini_runner(usage=usage)).collect()
     assert report.status is Status.SIGNED_OUT
+
+
+async def test_gemini_auth_prompt() -> None:
+    """Not signed in, agy asks for a sign-in on stderr (and is stopped there)."""
+    prompt = CommandResult(
+        returncode=0,
+        stdout="",
+        stderr="Authentication required. Please visit the URL to log in:\n",
+        aborted=True,
+    )
+    runner = FakeRunner({AGY_USAGE: prompt, AGY_CREDITS: prompt})
+    report = await GeminiSource(runner).collect()
+    assert report.status is Status.SIGNED_OUT
+    assert report.error == "The Antigravity CLI is not signed in"
 
 
 @pytest.mark.parametrize(

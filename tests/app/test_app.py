@@ -64,7 +64,9 @@ class InstallRunner:
         self.result = result
         self.calls: list[tuple[str, ...]] = []
 
-    async def run(self, argv: Sequence[str], *, time_limit: float) -> CommandResult:
+    async def run(
+        self, argv: Sequence[str], *, time_limit: float, abort_on: Sequence[str] = ()
+    ) -> CommandResult:
         command = tuple(argv)
         self.calls.append(command)
         if isinstance(self.result, BaseException):

@@ -29,6 +29,8 @@ class CommandResult:
     returncode: int
     stdout: str
     stderr: str
+    aborted: bool = False
+    """Stopped early because the output contained an ``abort_on`` phrase."""
 
 
 class LineSession(Protocol):
@@ -44,11 +46,19 @@ class LineSession(Protocol):
 class CommandRunner(Protocol):
     """Starts CLI commands."""
 
-    async def run(self, argv: Sequence[str], *, time_limit: float) -> CommandResult:
+    async def run(
+        self,
+        argv: Sequence[str],
+        *,
+        time_limit: float,
+        abort_on: Sequence[str] = (),
+    ) -> CommandResult:
         """Run a command to completion.
 
-        Raises ``CommandNotFoundError`` if it isn't installed and
-        ``TimeoutError`` if it doesn't finish in time.
+        Stops it early (``aborted``) once its output contains any of
+        ``abort_on``, e.g. a prompt it would wait at. Raises
+        ``CommandNotFoundError`` if it isn't installed and ``TimeoutError`` if it
+        doesn't finish in time.
         """
 
     def session(
@@ -83,19 +93,45 @@ class SubprocessRunner:
         except FileNotFoundError as err:
             raise CommandNotFoundError(argv[0]) from err
 
-    async def run(self, argv: Sequence[str], *, time_limit: float) -> CommandResult:
-        """Run a command to completion."""
+    async def run(
+        self,
+        argv: Sequence[str],
+        *,
+        time_limit: float,
+        abort_on: Sequence[str] = (),
+    ) -> CommandResult:
+        """Run a command to completion (see ``CommandRunner.run``)."""
         process = await self._start(argv, stdin=asyncio.subprocess.DEVNULL)
+        assert process.stdout is not None
+        assert process.stderr is not None
+        stdout, stderr = bytearray(), bytearray()
+        phrases = [phrase.encode() for phrase in abort_on]
+        aborted = False
+
+        async def pump(stream: asyncio.StreamReader, buffer: bytearray) -> None:
+            nonlocal aborted
+            while chunk := await stream.read(65536):
+                if len(buffer) < MAX_OUTPUT:
+                    buffer.extend(chunk[: MAX_OUTPUT - len(buffer)])
+                if not aborted and any(p in stdout or p in stderr for p in phrases):
+                    aborted = True
+                    with contextlib.suppress(ProcessLookupError):
+                        process.terminate()
+
         try:
             async with asyncio.timeout(time_limit):
-                stdout, stderr = await process.communicate()
+                await asyncio.gather(
+                    pump(process.stdout, stdout), pump(process.stderr, stderr)
+                )
+                await process.wait()
         except TimeoutError:
             await _stop(process)
             raise
         return CommandResult(
             returncode=process.returncode or 0,
-            stdout=stdout[:MAX_OUTPUT].decode(errors="replace"),
-            stderr=stderr[:MAX_OUTPUT].decode(errors="replace"),
+            stdout=stdout.decode(errors="replace"),
+            stderr=stderr.decode(errors="replace"),
+            aborted=aborted,
         )
 
     @contextlib.asynccontextmanager

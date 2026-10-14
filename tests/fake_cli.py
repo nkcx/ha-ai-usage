@@ -48,7 +48,9 @@ class FakeRunner:
         self.installed = installed
         self.calls: list[tuple[str, ...]] = []
 
-    async def run(self, argv: Sequence[str], *, time_limit: float) -> CommandResult:
+    async def run(
+        self, argv: Sequence[str], *, time_limit: float, abort_on: Sequence[str] = ()
+    ) -> CommandResult:
         """Return the recorded result for ``argv``."""
         key = tuple(argv)
         self.calls.append(key)
