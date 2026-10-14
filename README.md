@@ -8,8 +8,10 @@ weekly limits you've used, when they reset, and your remaining credits, for
 **Claude**, **Gemini** and **Codex**.
 
 - One device per provider, with a sensor for every limit and its reset time
+- Projections of where each limit is heading, learned from your own usage
+  pattern ("at this pace, the session runs out at 15:40")
 - Works on dashboards and in automations ("tell me when my weekly Claude limit
-  passes 80 %", "notify me when it resets")
+  passes 80 %", "warn me when I'm projected to run out")
 - New limits (for example a new model's weekly limit) appear automatically
 
 *Independent community project, not affiliated with or endorsed by Anthropic,
@@ -94,6 +96,9 @@ Each provider is a device, linked to the **AI Usage app** device.
 | Limit used | `sensor.claude_week` = 46 % | One per limit the provider reports |
 | Limit resets | `sensor.claude_week_resets` | Timestamp of the next reset |
 | Credits / spend | `sensor.gemini_ai_credits` | When the provider reports them |
+| Projected at reset | `sensor.claude_week_projected_at_reset` = 71 % | Where the window is heading; attributes: confidence, current and typical rate |
+| Runs out | `sensor.claude_session_runs_out` | When it's projected to reach 100 % (unknown if not before the reset) |
+| Projected to run out | `binary_sensor.claude_session_projected_to_run_out` | On when it's projected to run out before the reset |
 | Status | `sensor.claude_status` | Connected, Not signed in, Installing, Rate limited, Error (diagnostic) |
 | Last checked | `sensor.claude_last_checked` | Disabled by default (diagnostic) |
 | Refresh usage | `button.ai_usage_app_refresh_usage` | Reads every provider again now |
@@ -101,6 +106,16 @@ Each provider is a device, linked to the **AI Usage app** device.
 Limit names come from the provider ("Session", "Week (Fable)", "Gemini Models,
 weekly"). When a provider adds a limit, a new entity appears; when it stops
 reporting one, that entity becomes unavailable.
+
+### Projections
+
+Projections don't just divide usage by time: usage comes in bursts. The
+integration learns your typical usage for every hour of the week (recent
+weeks count most), then adds how much heavier or lighter than usual you're
+using it right now, fading that out over the next hours. The **confidence**
+attribute is *low* for the first week (only the current pace is used),
+*medium* after one week and *high* after three. History is kept by the
+integration itself (about 8 weeks), independently of the recorder.
 
 ### Data updates
 

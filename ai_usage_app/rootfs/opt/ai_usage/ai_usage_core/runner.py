@@ -22,6 +22,16 @@ class CommandNotFoundError(Exception):
     """The CLI isn't installed."""
 
 
+class CommandTimeoutError(TimeoutError):
+    """The CLI didn't finish in time; carries what it printed until then."""
+
+    def __init__(self, stdout: str, stderr: str) -> None:
+        """Keep the partial output."""
+        super().__init__("timed out")
+        self.stdout = stdout
+        self.stderr = stderr
+
+
 @dataclass(frozen=True, kw_only=True)
 class CommandResult:
     """A finished command."""
@@ -126,7 +136,9 @@ class SubprocessRunner:
                 await process.wait()
         except TimeoutError:
             await _stop(process)
-            raise
+            raise CommandTimeoutError(
+                stdout.decode(errors="replace"), stderr.decode(errors="replace")
+            ) from None
         return CommandResult(
             returncode=process.returncode or 0,
             stdout=stdout.decode(errors="replace"),

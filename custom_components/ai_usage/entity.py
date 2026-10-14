@@ -2,13 +2,61 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
+from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
+from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api import ProviderState
 from .const import DOMAIN, PROVIDERS
-from .coordinator import AiUsageCoordinator
-from .core.model import Meter, UsageReport
+from .coordinator import AiUsageConfigEntry, AiUsageCoordinator
+from .core.forecast import Projection
+from .core.model import Meter, MeterKind, UsageReport
+
+type EntityFactories = dict[str, Callable[[], Entity]]
+"""Entity key → how to create it."""
+
+
+def track_entities(
+    entry: AiUsageConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
+    wanted: Callable[[str, ProviderState], EntityFactories],
+) -> None:
+    """Add a platform's entities, and new ones as the app reports them.
+
+    ``wanted`` returns the entities an enabled provider should have. Entities
+    of providers turned off are forgotten (the coordinator removes their
+    device), so they're added again if the provider is turned back on.
+    """
+    coordinator = entry.runtime_data
+    known: set[str] = set()
+
+    @callback
+    def add_new() -> None:
+        factories: EntityFactories = {}
+        for provider, state in coordinator.data.providers.items():
+            if state.enabled:
+                factories.update(wanted(provider, state))
+        known.intersection_update(factories)
+        new = [create() for key, create in factories.items() if key not in known]
+        known.update(factories)
+        if new:
+            async_add_entities(new)
+
+    add_new()
+    entry.async_on_unload(coordinator.async_add_listener(add_new))
+
+
+def window_meters(state: ProviderState) -> list[Meter]:
+    """Return the provider's meters that have a usage window to project."""
+    return [
+        meter
+        for meter in (state.report.meters if state.report else ())
+        if meter.kind is MeterKind.WINDOW_USED and meter.resets_at is not None
+    ]
 
 
 class AiUsageEntity(CoordinatorEntity[AiUsageCoordinator]):
@@ -92,3 +140,17 @@ class MeterEntity(ProviderEntity):
     def available(self) -> bool:
         """Available while the provider reports this meter."""
         return super().available and self.meter is not None
+
+
+class ProjectionEntity(MeterEntity):
+    """An entity showing where a window meter is heading."""
+
+    @property
+    def projection(self) -> Projection | None:
+        """The meter's latest projection."""
+        return self.coordinator.projections.get((self.provider, self.meter_key))
+
+    @property
+    def available(self) -> bool:
+        """Available while there's a projection."""
+        return super().available and self.projection is not None

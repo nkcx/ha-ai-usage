@@ -32,7 +32,9 @@ async def poll(hass: HomeAssistant, freezer: FrozenDateTimeFactory) -> None:
 
 
 @pytest.mark.usefixtures("entity_registry_enabled_by_default")
-@pytest.mark.parametrize("platform", [Platform.SENSOR, Platform.BUTTON])
+@pytest.mark.parametrize(
+    "platform", [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON]
+)
 async def test_entities(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,

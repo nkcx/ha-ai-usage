@@ -86,6 +86,33 @@
       },
       "collected": {
         "name": "Last checked"
+      },
+      "projected": {
+        "name": "{meter} projected at reset",
+        "state_attributes": {
+          "confidence": {
+            "name": "Confidence",
+            "state": {
+              "low": "Low",
+              "medium": "Medium",
+              "high": "High"
+            }
+          },
+          "current_rate": {
+            "name": "Current rate"
+          },
+          "typical_rate": {
+            "name": "Typical rate"
+          }
+        }
+      },
+      "runs_out": {
+        "name": "{meter} runs out"
+      }
+    },
+    "binary_sensor": {
+      "runs_out_projected": {
+        "name": "{meter} projected to run out"
       }
     },
     "button": {

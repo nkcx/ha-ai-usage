@@ -7,6 +7,7 @@ import pytest
 
 from custom_components.ai_usage.core.runner import (
     CommandNotFoundError,
+    CommandTimeoutError,
     SubprocessRunner,
 )
 
@@ -42,10 +43,11 @@ async def test_run_not_found() -> None:
 
 
 async def test_run_timeout() -> None:
-    with pytest.raises(TimeoutError):
-        await SubprocessRunner().run(
-            [PYTHON, "-c", "import time; time.sleep(30)"], time_limit=0.5
-        )
+    script = "import sys, time; print('waiting...', file=sys.stderr, flush=True); time.sleep(30)"
+    with pytest.raises(CommandTimeoutError) as err:
+        await SubprocessRunner().run([PYTHON, "-c", script], time_limit=1)
+    assert err.value.stderr == "waiting...\n"
+    assert isinstance(err.value, TimeoutError)
 
 
 async def test_session() -> None:

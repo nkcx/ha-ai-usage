@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 from datetime import datetime
+from functools import partial
 import re
+from typing import Any
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -12,13 +13,20 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.const import PERCENTAGE, EntityCategory
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.entity import Entity
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
+from .api import ProviderState
 from .coordinator import AiUsageConfigEntry, AiUsageCoordinator
 from .core.model import Meter, MeterKind, Status
-from .entity import MeterEntity, ProviderEntity
+from .entity import (
+    EntityFactories,
+    MeterEntity,
+    ProjectionEntity,
+    ProviderEntity,
+    track_entities,
+    window_meters,
+)
 
 PARALLEL_UPDATES = 0
 
@@ -32,53 +40,30 @@ async def async_setup_entry(
 ) -> None:
     """Add sensors, and more as providers report new meters."""
     coordinator = entry.runtime_data
-    known: set[str] = set()
 
-    @callback
-    def add_new() -> None:
-        wanted: dict[str, Callable[[], Entity]] = {}
-        for provider, state in coordinator.data.providers.items():
-            if not state.enabled:
-                continue
-            wanted[f"{provider}/status"] = _factory(StatusSensor, coordinator, provider)
-            wanted[f"{provider}/collected"] = _factory(
-                CollectedSensor, coordinator, provider
+    def wanted(provider: str, state: ProviderState) -> EntityFactories:
+        factories: EntityFactories = {
+            f"{provider}/status": partial(StatusSensor, coordinator, provider),
+            f"{provider}/collected": partial(CollectedSensor, coordinator, provider),
+        }
+        for meter in state.report.meters if state.report else ():
+            factories[f"{provider}/{meter.key}"] = partial(
+                MeterSensor, coordinator, provider, meter
             )
-            for meter in state.report.meters if state.report else ():
-                wanted[f"{provider}/{meter.key}"] = _meter_factory(
-                    MeterSensor, coordinator, provider, meter
+            if meter.resets_at is not None:
+                factories[f"{provider}/{meter.key}/resets"] = partial(
+                    ResetSensor, coordinator, provider, meter
                 )
-                if meter.resets_at is not None:
-                    wanted[f"{provider}/{meter.key}/resets"] = _meter_factory(
-                        ResetSensor, coordinator, provider, meter
-                    )
-        # Forget entities of providers turned off, so they come back if
-        # turned on again (their device and entities were removed).
-        known.intersection_update(wanted)
-        new = [create() for key, create in wanted.items() if key not in known]
-        known.update(wanted)
-        if new:
-            async_add_entities(new)
+        for meter in window_meters(state):
+            factories[f"{provider}/{meter.key}/projected"] = partial(
+                ProjectedSensor, coordinator, provider, meter
+            )
+            factories[f"{provider}/{meter.key}/runs_out"] = partial(
+                RunsOutSensor, coordinator, provider, meter
+            )
+        return factories
 
-    add_new()
-    entry.async_on_unload(coordinator.async_add_listener(add_new))
-
-
-def _factory(
-    cls: Callable[[AiUsageCoordinator, str], Entity],
-    coordinator: AiUsageCoordinator,
-    provider: str,
-) -> Callable[[], Entity]:
-    return lambda: cls(coordinator, provider)
-
-
-def _meter_factory(
-    cls: Callable[[AiUsageCoordinator, str, Meter], Entity],
-    coordinator: AiUsageCoordinator,
-    provider: str,
-    meter: Meter,
-) -> Callable[[], Entity]:
-    return lambda: cls(coordinator, provider, meter)
+    track_entities(entry, async_add_entities, wanted)
 
 
 class MeterSensor(MeterEntity, SensorEntity):
@@ -170,3 +155,55 @@ class CollectedSensor(ProviderEntity, SensorEntity):
         """The time of the last collection."""
         report = self.report
         return None if report is None else report.collected_at
+
+
+class ProjectedSensor(ProjectionEntity, SensorEntity):
+    """Projected % of a window used when it resets (may exceed 100)."""
+
+    _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_suggested_display_precision = 0
+    _attr_translation_key = "projected"
+
+    def __init__(
+        self, coordinator: AiUsageCoordinator, provider: str, meter: Meter
+    ) -> None:
+        """Project ``meter``."""
+        super().__init__(coordinator, provider, meter, "_projected")
+
+    @property
+    def native_value(self) -> float | None:
+        """The projected % at reset."""
+        projection = self.projection
+        return None if projection is None else projection.at_reset
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        """How the projection was made."""
+        projection = self.projection
+        if projection is None:
+            return None
+        return {
+            "confidence": projection.confidence.value,
+            "current_rate": projection.current_rate,
+            "typical_rate": projection.typical_rate,
+        }
+
+
+class RunsOutSensor(ProjectionEntity, SensorEntity):
+    """When a window is projected to reach 100 % (unknown if not before reset)."""
+
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+    _attr_translation_key = "runs_out"
+
+    def __init__(
+        self, coordinator: AiUsageCoordinator, provider: str, meter: Meter
+    ) -> None:
+        """Project when ``meter`` runs out."""
+        super().__init__(coordinator, provider, meter, "_runs_out")
+
+    @property
+    def native_value(self) -> datetime | None:
+        """The projected time of reaching 100 %."""
+        projection = self.projection
+        return None if projection is None else projection.runs_out

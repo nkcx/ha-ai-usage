@@ -29,6 +29,20 @@
       },
       "collected": {
         "default": "mdi:clock-check-outline"
+      },
+      "projected": {
+        "default": "mdi:chart-timeline-variant-shimmer"
+      },
+      "runs_out": {
+        "default": "mdi:timer-sand-complete"
+      }
+    },
+    "binary_sensor": {
+      "runs_out_projected": {
+        "default": "mdi:timer-sand",
+        "state": {
+          "on": "mdi:timer-sand-complete"
+        }
       }
     },
     "button": {

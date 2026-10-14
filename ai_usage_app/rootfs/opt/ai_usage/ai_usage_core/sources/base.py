@@ -19,6 +19,12 @@ FIVE_HOURS = 5 * 3600
 ONE_WEEK = 7 * 24 * 3600
 
 
+def _last_line(text: str) -> str:
+    """Return the last non-empty line of ``text``, shortened."""
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    return lines[-1][:200] if lines else ""
+
+
 class SourceError(Exception):
     """A collection run failed; the report status says how."""
 
@@ -52,10 +58,13 @@ class CliSource(ABC):
             return self._failed(
                 now, Status.NOT_INSTALLED, f"{self.command} is not installed"
             )
-        except TimeoutError:
-            return self._failed(
-                now, Status.ERROR, f"{self.command} did not answer in time"
-            )
+        except TimeoutError as err:
+            message = f"{self.command} did not answer in time"
+            if last := _last_line(
+                getattr(err, "stderr", "") or getattr(err, "stdout", "")
+            ):
+                message += f" (last output: {last})"
+            return self._failed(now, Status.ERROR, message)
         except (ValueError, KeyError, TypeError) as err:
             _LOGGER.debug("Unexpected %s output", self.provider, exc_info=True)
             return self._failed(

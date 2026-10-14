@@ -242,12 +242,14 @@ def project(
     # Measure the recent rate up to the last sample: nothing is known after it.
     recent_end = min(now.timestamp(), history.last_time or now.timestamp())
     recent_start = recent_end - settings.recent_hours * HOUR
-    recent = sum(
-        _hourly_rate(history, hour) * _overlap(hour, recent_start, recent_end)
-        for hour in history.observed
-        if (hour + 1) * HOUR > recent_start
-    )
-    current_rate = recent / settings.recent_hours
+    # Average over the observed part of the window only: unobserved time is
+    # unknown, not idle.
+    consumed = observed = 0.0
+    for hour, covered in history.observed.items():
+        overlap = min(covered / HOUR, _overlap(hour, recent_start, recent_end))
+        consumed += _hourly_rate(history, hour) * overlap
+        observed += overlap
+    current_rate = consumed / observed if observed else 0.0
     typical_rate = profile[_hour_of_week(current_hour)]
     deviation = current_rate - typical_rate
 

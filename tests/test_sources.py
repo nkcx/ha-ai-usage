@@ -7,7 +7,7 @@ from typing import Any
 import pytest
 
 from custom_components.ai_usage.core.model import MeterKind, Status, account_id
-from custom_components.ai_usage.core.runner import CommandResult
+from custom_components.ai_usage.core.runner import CommandResult, CommandTimeoutError
 from custom_components.ai_usage.core.sources import CLI_SOURCES
 from custom_components.ai_usage.core.sources.claude import (
     AUTH_STATUS,
@@ -186,6 +186,14 @@ async def test_timeout() -> None:
     report = await ClaudeSource(runner).collect()
     assert report.status is Status.ERROR
     assert report.error == "claude did not answer in time"
+
+
+async def test_timeout_with_output() -> None:
+    runner = FakeRunner(
+        {CLAUDE_AUTH: CommandTimeoutError("", "Starting\nWaiting for X\n\n")}
+    )
+    report = await ClaudeSource(runner).collect()
+    assert report.error == "claude did not answer in time (last output: Waiting for X)"
 
 
 # Gemini

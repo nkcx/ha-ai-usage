@@ -1,4 +1,361 @@
 # serializer version: 1
+# name: test_entities[binary_sensor][binary_sensor.claude_session_projected_to_run_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.claude_session_projected_to_run_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Session projected to run out',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.PROBLEM: 'problem'>,
+    'original_icon': None,
+    'original_name': 'Session projected to run out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out_projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_claude_session_runs_out_projected',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.claude_session_projected_to_run_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Claude Session projected to run out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.claude_session_projected_to_run_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.claude_week_fable_projected_to_run_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.claude_week_fable_projected_to_run_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Week (Fable) projected to run out',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.PROBLEM: 'problem'>,
+    'original_icon': None,
+    'original_name': 'Week (Fable) projected to run out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out_projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_claude_weekly_fable_runs_out_projected',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.claude_week_fable_projected_to_run_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Claude Week (Fable) projected to run out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.claude_week_fable_projected_to_run_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.claude_week_projected_to_run_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.claude_week_projected_to_run_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Week projected to run out',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.PROBLEM: 'problem'>,
+    'original_icon': None,
+    'original_name': 'Week projected to run out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out_projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_claude_weekly_runs_out_projected',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.claude_week_projected_to_run_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Claude Week projected to run out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.claude_week_projected_to_run_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.gemini_claude_and_gpt_models_5_hour_projected_to_run_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.gemini_claude_and_gpt_models_5_hour_projected_to_run_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Claude and GPT models, 5-hour projected to run out',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.PROBLEM: 'problem'>,
+    'original_icon': None,
+    'original_name': 'Claude and GPT models, 5-hour projected to run out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out_projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_claude_and_gpt_models_5h_runs_out_projected',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.gemini_claude_and_gpt_models_5_hour_projected_to_run_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Claude and GPT models, 5-hour projected to run out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.gemini_claude_and_gpt_models_5_hour_projected_to_run_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.gemini_claude_and_gpt_models_weekly_projected_to_run_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.gemini_claude_and_gpt_models_weekly_projected_to_run_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Claude and GPT models, weekly projected to run out',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.PROBLEM: 'problem'>,
+    'original_icon': None,
+    'original_name': 'Claude and GPT models, weekly projected to run out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out_projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_claude_and_gpt_models_weekly_runs_out_projected',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.gemini_claude_and_gpt_models_weekly_projected_to_run_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Claude and GPT models, weekly projected to run out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.gemini_claude_and_gpt_models_weekly_projected_to_run_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.gemini_gemini_models_5_hour_projected_to_run_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.gemini_gemini_models_5_hour_projected_to_run_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Gemini Models, 5-hour projected to run out',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.PROBLEM: 'problem'>,
+    'original_icon': None,
+    'original_name': 'Gemini Models, 5-hour projected to run out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out_projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_gemini_models_5h_runs_out_projected',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.gemini_gemini_models_5_hour_projected_to_run_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Gemini Models, 5-hour projected to run out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.gemini_gemini_models_5_hour_projected_to_run_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.gemini_gemini_models_weekly_projected_to_run_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.gemini_gemini_models_weekly_projected_to_run_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Gemini Models, weekly projected to run out',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.PROBLEM: 'problem'>,
+    'original_icon': None,
+    'original_name': 'Gemini Models, weekly projected to run out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out_projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_gemini_models_weekly_runs_out_projected',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[binary_sensor][binary_sensor.gemini_gemini_models_weekly_projected_to_run_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Gemini Models, weekly projected to run out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.gemini_gemini_models_weekly_projected_to_run_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
 # name: test_entities[button][button.ai_usage_app_refresh_usage-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -157,6 +514,66 @@
     'state': '27.0',
   })
 # ---
+# name: test_entities[sensor][sensor.claude_session_projected_at_reset-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.claude_session_projected_at_reset',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Session projected at reset',
+    'options': dict({
+      'sensor': dict({
+        'suggested_display_precision': 0,
+      }),
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Session projected at reset',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_claude_session_projected',
+    'unit_of_measurement': '%',
+  })
+# ---
+# name: test_entities[sensor][sensor.claude_session_projected_at_reset-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'confidence': 'low',
+      'current_rate': 0.0,
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Claude Session projected at reset',
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+      'typical_rate': 0.0,
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.claude_session_projected_at_reset',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '27.0',
+  })
+# ---
 # name: test_entities[sensor][sensor.claude_session_resets-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -206,6 +623,57 @@
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '2026-10-15T01:30:00+00:00',
+  })
+# ---
+# name: test_entities[sensor][sensor.claude_session_runs_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.claude_session_runs_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Session runs out',
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
+    'original_icon': None,
+    'original_name': 'Session runs out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out',
+    'unique_id': '0123456789abcdef0123456789abcdef_claude_session_runs_out',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.claude_session_runs_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Claude Session runs out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.claude_session_runs_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
   })
 # ---
 # name: test_entities[sensor][sensor.claude_status-entry]
@@ -390,6 +858,66 @@
     'state': '0.0',
   })
 # ---
+# name: test_entities[sensor][sensor.claude_week_fable_projected_at_reset-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.claude_week_fable_projected_at_reset',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Week (Fable) projected at reset',
+    'options': dict({
+      'sensor': dict({
+        'suggested_display_precision': 0,
+      }),
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Week (Fable) projected at reset',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_claude_weekly_fable_projected',
+    'unit_of_measurement': '%',
+  })
+# ---
+# name: test_entities[sensor][sensor.claude_week_fable_projected_at_reset-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'confidence': 'low',
+      'current_rate': 0.0,
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Claude Week (Fable) projected at reset',
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+      'typical_rate': 0.0,
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.claude_week_fable_projected_at_reset',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '0.0',
+  })
+# ---
 # name: test_entities[sensor][sensor.claude_week_fable_resets-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -441,6 +969,117 @@
     'state': '2026-10-16T08:00:00+00:00',
   })
 # ---
+# name: test_entities[sensor][sensor.claude_week_fable_runs_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.claude_week_fable_runs_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Week (Fable) runs out',
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
+    'original_icon': None,
+    'original_name': 'Week (Fable) runs out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out',
+    'unique_id': '0123456789abcdef0123456789abcdef_claude_weekly_fable_runs_out',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.claude_week_fable_runs_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Claude Week (Fable) runs out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.claude_week_fable_runs_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
+  })
+# ---
+# name: test_entities[sensor][sensor.claude_week_projected_at_reset-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.claude_week_projected_at_reset',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Week projected at reset',
+    'options': dict({
+      'sensor': dict({
+        'suggested_display_precision': 0,
+      }),
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Week projected at reset',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_claude_weekly_projected',
+    'unit_of_measurement': '%',
+  })
+# ---
+# name: test_entities[sensor][sensor.claude_week_projected_at_reset-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'confidence': 'low',
+      'current_rate': 0.0,
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Claude Week projected at reset',
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+      'typical_rate': 0.0,
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.claude_week_projected_at_reset',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '46.0',
+  })
+# ---
 # name: test_entities[sensor][sensor.claude_week_resets-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -490,6 +1129,57 @@
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '2026-10-16T08:00:00+00:00',
+  })
+# ---
+# name: test_entities[sensor][sensor.claude_week_runs_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.claude_week_runs_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Week runs out',
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
+    'original_icon': None,
+    'original_name': 'Week runs out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out',
+    'unique_id': '0123456789abcdef0123456789abcdef_claude_weekly_runs_out',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.claude_week_runs_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Claude Week runs out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.claude_week_runs_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
   })
 # ---
 # name: test_entities[sensor][sensor.codex_last_checked-entry]
@@ -722,6 +1412,66 @@
     'state': '0.0',
   })
 # ---
+# name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_5_hour_projected_at_reset-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.gemini_claude_and_gpt_models_5_hour_projected_at_reset',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Claude and GPT models, 5-hour projected at reset',
+    'options': dict({
+      'sensor': dict({
+        'suggested_display_precision': 0,
+      }),
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Claude and GPT models, 5-hour projected at reset',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_claude_and_gpt_models_5h_projected',
+    'unit_of_measurement': '%',
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_5_hour_projected_at_reset-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'confidence': 'low',
+      'current_rate': 0.0,
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Claude and GPT models, 5-hour projected at reset',
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+      'typical_rate': 0.0,
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.gemini_claude_and_gpt_models_5_hour_projected_at_reset',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '0.0',
+  })
+# ---
 # name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_5_hour_resets-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -771,6 +1521,57 @@
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '2026-10-15T01:36:38+00:00',
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_5_hour_runs_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.gemini_claude_and_gpt_models_5_hour_runs_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Claude and GPT models, 5-hour runs out',
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
+    'original_icon': None,
+    'original_name': 'Claude and GPT models, 5-hour runs out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_claude_and_gpt_models_5h_runs_out',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_5_hour_runs_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Claude and GPT models, 5-hour runs out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.gemini_claude_and_gpt_models_5_hour_runs_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
   })
 # ---
 # name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_weekly-entry]
@@ -830,6 +1631,66 @@
     'state': '0.0',
   })
 # ---
+# name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_weekly_projected_at_reset-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.gemini_claude_and_gpt_models_weekly_projected_at_reset',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Claude and GPT models, weekly projected at reset',
+    'options': dict({
+      'sensor': dict({
+        'suggested_display_precision': 0,
+      }),
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Claude and GPT models, weekly projected at reset',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_claude_and_gpt_models_weekly_projected',
+    'unit_of_measurement': '%',
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_weekly_projected_at_reset-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'confidence': 'low',
+      'current_rate': 0.0,
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Claude and GPT models, weekly projected at reset',
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+      'typical_rate': 0.0,
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.gemini_claude_and_gpt_models_weekly_projected_at_reset',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '0.0',
+  })
+# ---
 # name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_weekly_resets-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -879,6 +1740,57 @@
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '2026-10-21T20:36:38+00:00',
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_weekly_runs_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.gemini_claude_and_gpt_models_weekly_runs_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Claude and GPT models, weekly runs out',
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
+    'original_icon': None,
+    'original_name': 'Claude and GPT models, weekly runs out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_claude_and_gpt_models_weekly_runs_out',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_claude_and_gpt_models_weekly_runs_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Claude and GPT models, weekly runs out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.gemini_claude_and_gpt_models_weekly_runs_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
   })
 # ---
 # name: test_entities[sensor][sensor.gemini_gemini_models_5_hour-entry]
@@ -938,6 +1850,66 @@
     'state': '2.8',
   })
 # ---
+# name: test_entities[sensor][sensor.gemini_gemini_models_5_hour_projected_at_reset-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.gemini_gemini_models_5_hour_projected_at_reset',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Gemini Models, 5-hour projected at reset',
+    'options': dict({
+      'sensor': dict({
+        'suggested_display_precision': 0,
+      }),
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Gemini Models, 5-hour projected at reset',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_gemini_models_5h_projected',
+    'unit_of_measurement': '%',
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_gemini_models_5_hour_projected_at_reset-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'confidence': 'low',
+      'current_rate': 0.0,
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Gemini Models, 5-hour projected at reset',
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+      'typical_rate': 0.0,
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.gemini_gemini_models_5_hour_projected_at_reset',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '2.8',
+  })
+# ---
 # name: test_entities[sensor][sensor.gemini_gemini_models_5_hour_resets-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -987,6 +1959,57 @@
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '2026-10-15T00:57:15+00:00',
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_gemini_models_5_hour_runs_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.gemini_gemini_models_5_hour_runs_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Gemini Models, 5-hour runs out',
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
+    'original_icon': None,
+    'original_name': 'Gemini Models, 5-hour runs out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_gemini_models_5h_runs_out',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_gemini_models_5_hour_runs_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Gemini Models, 5-hour runs out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.gemini_gemini_models_5_hour_runs_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
   })
 # ---
 # name: test_entities[sensor][sensor.gemini_gemini_models_weekly-entry]
@@ -1046,6 +2069,66 @@
     'state': '2.1',
   })
 # ---
+# name: test_entities[sensor][sensor.gemini_gemini_models_weekly_projected_at_reset-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.gemini_gemini_models_weekly_projected_at_reset',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Gemini Models, weekly projected at reset',
+    'options': dict({
+      'sensor': dict({
+        'suggested_display_precision': 0,
+      }),
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Gemini Models, weekly projected at reset',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'projected',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_gemini_models_weekly_projected',
+    'unit_of_measurement': '%',
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_gemini_models_weekly_projected_at_reset-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'confidence': 'low',
+      'current_rate': 0.0,
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Gemini Models, weekly projected at reset',
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+      'typical_rate': 0.0,
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.gemini_gemini_models_weekly_projected_at_reset',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '2.1',
+  })
+# ---
 # name: test_entities[sensor][sensor.gemini_gemini_models_weekly_resets-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -1095,6 +2178,57 @@
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '2026-10-14T21:35:07+00:00',
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_gemini_models_weekly_runs_out-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.gemini_gemini_models_weekly_runs_out',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Gemini Models, weekly runs out',
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
+    'original_icon': None,
+    'original_name': 'Gemini Models, weekly runs out',
+    'platform': 'ai_usage',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'runs_out',
+    'unique_id': '0123456789abcdef0123456789abcdef_gemini_gemini_models_weekly_runs_out',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.gemini_gemini_models_weekly_runs_out-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Gemini Gemini Models, weekly runs out',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.gemini_gemini_models_weekly_runs_out',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
   })
 # ---
 # name: test_entities[sensor][sensor.gemini_last_checked-entry]
