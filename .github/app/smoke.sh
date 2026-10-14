@@ -29,7 +29,7 @@ for _ in $(seq 1 60); do
         http://127.0.0.1:18080/api/v1/reports || true)"
     [ -n "$reports" ] || continue
     if echo "$reports" | jq -e '[.providers[] | select(.report == null)] | length == 0' >/dev/null; then
-        echo "$reports" | jq '.providers | map_values({installed, install_error, status: .report.status, error: .report.error})'
+        echo "$reports" | jq '.providers | map_values({installed, install_error, status: .report.status, error: .report.error, output: .report.extra.output})'
         echo "$reports" | jq -e '[.providers[] | select(.installed | not)] | length == 0' >/dev/null \
             || { echo "A CLI failed to install"; exit 1; }
         echo "$reports" | jq -e '[.providers[] | select(.report.status == "not_installed")] | length == 0' >/dev/null \

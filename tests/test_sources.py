@@ -194,6 +194,7 @@ async def test_timeout_with_output() -> None:
     )
     report = await ClaudeSource(runner).collect()
     assert report.error == "claude did not answer in time (last output: Waiting for X)"
+    assert report.extra == {"output": {"stderr": "Starting\nWaiting for X\n\n"}}
 
 
 # Gemini

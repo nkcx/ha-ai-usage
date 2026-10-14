@@ -14,6 +14,8 @@ _LOGGER = logging.getLogger(__name__)
 
 #: Seconds allowed for one CLI call.
 COMMAND_TIMEOUT = 60.0
+#: Characters of a timed-out CLI's output kept for diagnostics.
+OUTPUT_KEPT = 2000
 
 FIVE_HOURS = 5 * 3600
 ONE_WEEK = 7 * 24 * 3600
@@ -64,7 +66,12 @@ class CliSource(ABC):
                 getattr(err, "stderr", "") or getattr(err, "stdout", "")
             ):
                 message += f" (last output: {last})"
-            return self._failed(now, Status.ERROR, message)
+            output = {
+                name: text[-OUTPUT_KEPT:]
+                for name in ("stdout", "stderr")
+                if (text := getattr(err, name, ""))
+            }
+            return self._failed(now, Status.ERROR, message, {"output": output})
         except (ValueError, KeyError, TypeError) as err:
             _LOGGER.debug("Unexpected %s output", self.provider, exc_info=True)
             return self._failed(
@@ -81,13 +88,20 @@ class CliSource(ABC):
             extra=extra,
         )
 
-    def _failed(self, now: datetime, status: Status, message: str) -> UsageReport:
+    def _failed(
+        self,
+        now: datetime,
+        status: Status,
+        message: str,
+        extra: dict[str, Any] | None = None,
+    ) -> UsageReport:
         return UsageReport(
             provider=self.provider,
             source=SourceType.CLI,
             status=status,
             collected_at=now,
             error=message,
+            extra=extra or {},
         )
 
     @abstractmethod
