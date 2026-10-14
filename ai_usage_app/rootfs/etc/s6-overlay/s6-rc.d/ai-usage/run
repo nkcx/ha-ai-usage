@@ -1,0 +1,5 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# Collects usage from the enabled CLIs and serves it to Home Assistant.
+mkdir -p /data/home /data/work
+exec python3 -m ai_usage_app

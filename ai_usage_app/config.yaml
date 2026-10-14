@@ -1,7 +1,7 @@
 name: AI Usage
-version: "0.0.1"
+version: "0.1.0"
 slug: ai_usage
-description: Collects AI subscription usage from the official CLIs for the AI Usage integration
+description: Reads your AI subscription usage (Claude, Gemini, Codex) from the official CLIs for the AI Usage integration
 url: https://github.com/nkcx/ha-ai-usage
 arch:
   - amd64
@@ -9,3 +9,35 @@ arch:
 init: false
 startup: application
 boot: auto
+ingress: true
+ingress_port: 8099
+ingress_stream: true
+panel_icon: mdi:gauge
+panel_title: AI Usage
+panel_admin: true
+ports:
+  8080/tcp: null
+ports_description:
+  8080/tcp: Usage API for the AI Usage integration (internal network only)
+discovery:
+  - ai_usage
+backup: hot
+backup_exclude:
+  - "home/.local/**"
+  - "home/.cache/**"
+  - "home/.npm/**"
+  - "home/.gemini/antigravity-cli/bin/**"
+  - "home/.gemini/antigravity-cli/cache/**"
+  - "home/.gemini/antigravity-cli/updater/**"
+  - "home/.claude/projects/**"
+  - "work/**"
+options:
+  claude: false
+  gemini: false
+  codex: false
+  interval_minutes: 5
+schema:
+  claude: bool
+  gemini: bool
+  codex: bool
+  interval_minutes: int(5,60)

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Runs a CLI's own sign-in in the web terminal: ai-usage-login claude|gemini|codex|shell
+cd /data/work || exit 1
+
+refresh() {
+    curl -fsS -X POST -H "Authorization: Bearer $(cat /data/api_token)" \
+        http://127.0.0.1:8080/api/v1/refresh >/dev/null \
+        && echo "Usage will be checked again now."
+}
+
+case "${1:-shell}" in
+    claude)
+        echo "Signing in to Claude Code with your Claude subscription."
+        echo
+        claude auth login --claudeai && refresh
+        ;;
+    gemini)
+        echo "Starting the Antigravity CLI. Sign in when it asks, then type /exit."
+        echo
+        agy && refresh
+        ;;
+    codex)
+        echo "Signing in to Codex with your ChatGPT account (device code)."
+        echo
+        codex login --device-auth && refresh
+        ;;
+    *) ;;
+esac
+echo
+echo "You can close this tab, or keep using this shell."
+exec bash -l

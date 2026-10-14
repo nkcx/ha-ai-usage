@@ -34,9 +34,13 @@ jobs:
         with:
           python-version: "3.14"
       - run: pip install -r requirements_test.txt
-      - run: ruff check custom_components tests
-      - run: ruff format --check custom_components tests
+      - run: ruff check custom_components tests ai_usage_app scripts
+      - run: ruff format --check custom_components tests ai_usage_app scripts
       - run: mypy
+      - run: mypy --strict -p ai_usage_app
+        env:
+          MYPYPATH: ai_usage_app/rootfs/opt/ai_usage
+      - run: python scripts/sync_core.py --check
 
   test:
     runs-on: ubuntu-latest
@@ -47,3 +51,11 @@ jobs:
           python-version: "3.14"
       - run: pip install -r requirements_test.txt
       - run: python -m pytest tests -q --cov --cov-report=term-missing --cov-fail-under=95
+
+  app:
+    name: app (build + smoke test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: docker build --build-arg BUILD_VERSION=ci -t ai-usage-app:ci ai_usage_app
+      - run: .github/app/smoke.sh ai-usage-app:ci

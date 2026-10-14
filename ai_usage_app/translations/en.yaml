@@ -1,0 +1,13 @@
+configuration:
+  claude:
+    name: Claude
+    description: Install Claude Code and track your Claude plan's session and weekly limits.
+  gemini:
+    name: Gemini
+    description: Install the Antigravity CLI and track your Google AI plan's 5-hour and weekly limits and AI credits.
+  codex:
+    name: Codex
+    description: Install the Codex CLI and track your ChatGPT plan's Codex limits.
+  interval_minutes:
+    name: Check every (minutes)
+    description: How often to read usage from the CLIs (5 to 60 minutes).

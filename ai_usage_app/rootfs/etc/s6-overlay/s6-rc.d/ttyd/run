@@ -1,0 +1,15 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# Web terminal for signing in to the CLIs. Listens on localhost only: the app's
+# ingress server (which only accepts Home Assistant's ingress proxy) proxies it.
+mkdir -p /data/home /data/work
+cd /data/work || exit 1
+exec ttyd \
+    --interface lo \
+    --port 7681 \
+    --base-path /term \
+    --writable \
+    --url-arg \
+    --client-option disableLeaveAlert=true \
+    --client-option titleFixed="AI Usage" \
+    /usr/bin/ai-usage-login

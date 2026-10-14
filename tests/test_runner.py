@@ -1,5 +1,6 @@
 """Tests for the subprocess runner, with real subprocesses."""
 
+from pathlib import Path
 import sys
 
 import pytest
@@ -26,6 +27,13 @@ async def test_run() -> None:
     assert result.returncode == 3
     assert result.stdout == "hello\n"
     assert result.stderr == "err\n"
+
+
+async def test_run_cwd(tmp_path: Path) -> None:
+    result = await SubprocessRunner(cwd=str(tmp_path)).run(
+        [PYTHON, "-c", "import os; print(os.getcwd())"], time_limit=30
+    )
+    assert result.stdout.strip() == str(tmp_path)
 
 
 async def test_run_not_found() -> None:

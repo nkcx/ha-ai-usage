@@ -60,9 +60,12 @@ class CommandRunner(Protocol):
 class SubprocessRunner:
     """Runs commands as local subprocesses."""
 
-    def __init__(self, env: Mapping[str, str] | None = None) -> None:
-        """Run commands with ``env`` added to the current environment."""
+    def __init__(
+        self, env: Mapping[str, str] | None = None, cwd: str | None = None
+    ) -> None:
+        """Run commands in ``cwd`` with ``env`` added to the current environment."""
         self._env = {**os.environ, **(env or {})}
+        self._cwd = cwd
 
     async def _start(
         self, argv: Sequence[str], *, stdin: int | None
@@ -74,6 +77,7 @@ class SubprocessRunner:
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
                 env=self._env,
+                cwd=self._cwd,
                 limit=MAX_OUTPUT,
             )
         except FileNotFoundError as err:
