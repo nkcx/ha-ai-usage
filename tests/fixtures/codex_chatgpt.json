@@ -1,0 +1,86 @@
+{
+  "initialize": {
+    "userAgent": "ai_usage/0.162.1 (Debian 12.0.0; x86_64) xterm-256color (ai_usage; 1)",
+    "codexHome": "/data/home/.codex",
+    "platformFamily": "unix",
+    "platformOs": "linux"
+  },
+  "account/read": {
+    "account": {
+      "type": "chatgpt",
+      "email": "user@example.com",
+      "planType": "pro"
+    },
+    "requiresOpenaiAuth": true,
+    "workspaceRouting": null
+  },
+  "account/rateLimits/read": {
+    "rateLimits": {
+      "limitId": "codex",
+      "limitName": null,
+      "normalModelSlug": null,
+      "primary": {
+        "usedPercent": 42,
+        "windowDurationMins": 300,
+        "resetsAt": 1792027800
+      },
+      "secondary": {
+        "usedPercent": 5,
+        "windowDurationMins": 10080,
+        "resetsAt": 1792396800
+      },
+      "credits": {
+        "hasCredits": true,
+        "unlimited": false,
+        "balance": "12.5"
+      },
+      "individualLimit": null,
+      "spendControlReached": false,
+      "planType": "pro",
+      "rateLimitReachedType": null
+    },
+    "rateLimitsByLimitId": {
+      "codex": {
+        "limitId": "codex",
+        "limitName": null,
+        "normalModelSlug": null,
+        "primary": {
+          "usedPercent": 42,
+          "windowDurationMins": 300,
+          "resetsAt": 1792027800
+        },
+        "secondary": {
+          "usedPercent": 5,
+          "windowDurationMins": 10080,
+          "resetsAt": 1792396800
+        },
+        "credits": {
+          "hasCredits": true,
+          "unlimited": false,
+          "balance": "12.5"
+        },
+        "individualLimit": null,
+        "spendControlReached": false,
+        "planType": "pro",
+        "rateLimitReachedType": null
+      },
+      "codex_other": {
+        "limitId": "codex_other",
+        "limitName": "GPT-5.5 Spark",
+        "normalModelSlug": "gpt-5.5-spark",
+        "primary": {
+          "usedPercent": 88,
+          "windowDurationMins": 300,
+          "resetsAt": 1792027800
+        },
+        "secondary": null,
+        "credits": null,
+        "individualLimit": null,
+        "spendControlReached": null,
+        "planType": "pro",
+        "rateLimitReachedType": null
+      }
+    },
+    "rateLimitResetCredits": null
+  }
+}
