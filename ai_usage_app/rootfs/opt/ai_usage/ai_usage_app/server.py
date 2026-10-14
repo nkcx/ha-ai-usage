@@ -25,6 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 
 PROVIDERS_KEY = web.AppKey("collector", Collector)
 TOKEN_KEY = web.AppKey("token", str)
+INSTANCE_KEY = web.AppKey("instance_id", str)
 TTYD_KEY = web.AppKey("ttyd", str)
 SESSION_KEY = web.AppKey("session", ClientSession)
 
@@ -59,6 +60,7 @@ async def reports(request: web.Request) -> web.Response:
     return web.json_response(
         {
             "schema": 1,
+            "instance_id": request.app[INSTANCE_KEY],
             "app_version": __version__,
             "updated_at": None
             if collector.updated_at is None
@@ -71,7 +73,13 @@ async def reports(request: web.Request) -> web.Response:
 
 async def health(request: web.Request) -> web.Response:
     """Return liveness information."""
-    return web.json_response({"status": "ok", "app_version": __version__})
+    return web.json_response(
+        {
+            "status": "ok",
+            "instance_id": request.app[INSTANCE_KEY],
+            "app_version": __version__,
+        }
+    )
 
 
 async def refresh(request: web.Request) -> web.Response:
@@ -80,11 +88,12 @@ async def refresh(request: web.Request) -> web.Response:
     return web.json_response({"status": "scheduled"}, status=202)
 
 
-def api_app(collector: Collector, token: str) -> web.Application:
+def api_app(collector: Collector, token: str, instance_id: str) -> web.Application:
     """Build the usage API."""
     app = web.Application(middlewares=[require_token])
     app[PROVIDERS_KEY] = collector
     app[TOKEN_KEY] = token
+    app[INSTANCE_KEY] = instance_id
     app.router.add_get("/api/v1/reports", reports)
     app.router.add_get("/api/v1/health", health)
     app.router.add_post("/api/v1/refresh", refresh)

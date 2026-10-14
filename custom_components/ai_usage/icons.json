@@ -1,0 +1,40 @@
+{
+  "entity": {
+    "sensor": {
+      "window_used": {
+        "default": "mdi:gauge"
+      },
+      "quota_remaining": {
+        "default": "mdi:gauge-low"
+      },
+      "balance": {
+        "default": "mdi:circle-multiple-outline"
+      },
+      "spend": {
+        "default": "mdi:cash"
+      },
+      "resets": {
+        "default": "mdi:timer-refresh-outline"
+      },
+      "status": {
+        "default": "mdi:list-status",
+        "state": {
+          "ok": "mdi:check-circle-outline",
+          "signed_out": "mdi:account-key-outline",
+          "not_installed": "mdi:download-off-outline",
+          "installing": "mdi:download-outline",
+          "rate_limited": "mdi:speedometer-slow",
+          "error": "mdi:alert-circle-outline"
+        }
+      },
+      "collected": {
+        "default": "mdi:clock-check-outline"
+      }
+    },
+    "button": {
+      "refresh": {
+        "default": "mdi:refresh"
+      }
+    }
+  }
+}

@@ -51,6 +51,11 @@ class Paths:
         return self.data / "api_token"
 
     @property
+    def instance_id(self) -> Path:
+        """Random ID identifying this app installation."""
+        return self.data / "instance_id"
+
+    @property
     def reports(self) -> Path:
         """Latest reports, so a restart doesn't start empty."""
         return self.data / "reports.json"

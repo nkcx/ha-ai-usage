@@ -1,9 +1,13 @@
 {
   "domain": "ai_usage",
   "name": "AI Usage",
+  "after_dependencies": [
+    "hassio"
+  ],
   "codeowners": [
     "@nkcx"
   ],
+  "config_flow": true,
   "documentation": "https://github.com/nkcx/ha-ai-usage",
   "integration_type": "hub",
   "iot_class": "local_polling",

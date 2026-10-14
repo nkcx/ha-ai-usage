@@ -1,0 +1,118 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to the AI Usage app",
+        "description": "Usually Home Assistant finds the AI Usage app on its own. Enter its address and token here only if the app runs outside Home Assistant's app system.",
+        "data": {
+          "host": "[%key:common::config_flow::data::host%]",
+          "port": "[%key:common::config_flow::data::port%]",
+          "api_token": "[%key:common::config_flow::data::api_token%]"
+        },
+        "data_description": {
+          "host": "Host name or IP address of the AI Usage app.",
+          "port": "Port of the app's usage API (8080 by default).",
+          "api_token": "The token in the app's `/data/api_token` file."
+        }
+      },
+      "hassio_confirm": {
+        "title": "AI Usage app found",
+        "description": "Set up the AI Usage integration with the AI Usage app?"
+      },
+      "reauth_confirm": {
+        "title": "[%key:common::config_flow::title::reauth%]",
+        "description": "The AI Usage app no longer accepts the token. Enter its current token.",
+        "data": {
+          "api_token": "[%key:common::config_flow::data::api_token%]"
+        },
+        "data_description": {
+          "api_token": "The token in the app's `/data/api_token` file."
+        }
+      },
+      "reconfigure": {
+        "title": "Change the AI Usage app connection",
+        "data": {
+          "host": "[%key:common::config_flow::data::host%]",
+          "port": "[%key:common::config_flow::data::port%]",
+          "api_token": "[%key:common::config_flow::data::api_token%]"
+        },
+        "data_description": {
+          "host": "Host name or IP address of the AI Usage app.",
+          "port": "Port of the app's usage API (8080 by default).",
+          "api_token": "The token in the app's `/data/api_token` file."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "The app rejected the token."
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_service%]",
+      "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]",
+      "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]",
+      "wrong_app": "That's a different AI Usage app installation.",
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "The app rejected the token."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "window_used": {
+        "name": "{meter}"
+      },
+      "quota_remaining": {
+        "name": "{meter}"
+      },
+      "balance": {
+        "name": "{meter}"
+      },
+      "spend": {
+        "name": "{meter}"
+      },
+      "resets": {
+        "name": "{meter} resets"
+      },
+      "status": {
+        "name": "Status",
+        "state": {
+          "ok": "Connected",
+          "signed_out": "Not signed in",
+          "not_installed": "Not installed",
+          "installing": "Installing",
+          "rate_limited": "Rate limited",
+          "error": "Error"
+        }
+      },
+      "collected": {
+        "name": "Last checked"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Refresh usage"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_token": {
+      "message": "The AI Usage app rejected the token."
+    },
+    "cannot_connect": {
+      "message": "Can't reach the AI Usage app: {error}"
+    },
+    "refresh_failed": {
+      "message": "The AI Usage app couldn't start a refresh: {error}"
+    }
+  },
+  "issues": {
+    "signed_out": {
+      "title": "{provider} needs signing in",
+      "description": "The {cli} in the AI Usage app isn't signed in, so your {provider} usage can't be read. Open the AI Usage app's page and select **Sign in** under {provider}."
+    },
+    "install_failed": {
+      "title": "Installing the {cli} failed",
+      "description": "The AI Usage app couldn't install the {cli}: {error}\n\nIt tries again when the app restarts. Check the app's log for details."
+    }
+  }
+}

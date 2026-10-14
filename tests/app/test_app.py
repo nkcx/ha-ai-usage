@@ -302,6 +302,12 @@ def test_load_token(paths: Paths) -> None:
     assert paths.token.stat().st_mode & 0o777 == 0o600
 
 
+def test_load_instance_id(paths: Paths) -> None:
+    instance_id = app_main.load_instance_id(paths)
+    assert len(instance_id) == 32
+    assert app_main.load_instance_id(paths) == instance_id
+
+
 async def test_main(paths: Paths, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("AI_USAGE_DATA", str(paths.data))
     monkeypatch.setattr(app_main, "API_PORT", 0)

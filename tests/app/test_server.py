@@ -56,7 +56,9 @@ def collector(paths: Paths) -> Collector:
 async def api(
     collector: Collector,
 ) -> AsyncIterator[TestClient[web.Request, web.Application]]:
-    async with TestClient(TestServer(server.api_app(collector, TOKEN))) as client:
+    async with TestClient(
+        TestServer(server.api_app(collector, TOKEN, "inst"))
+    ) as client:
         yield client
 
 
@@ -74,6 +76,7 @@ async def test_api_reports(api: TestClient[web.Request, web.Application]) -> Non
     assert response.status == 200
     data = await response.json()
     assert data["schema"] == 1
+    assert data["instance_id"] == "inst"
     assert data["updated_at"] == NOW.isoformat()
     assert data["interval_minutes"] == 5
     assert set(data["providers"]) == {"claude", "gemini", "codex"}
@@ -81,7 +84,11 @@ async def test_api_reports(api: TestClient[web.Request, web.Application]) -> Non
     assert data["providers"]["gemini"]["report"] is None
 
     response = await api.get("/api/v1/health", headers=auth)
-    assert (await response.json())["status"] == "ok"
+    assert await response.json() == {
+        "status": "ok",
+        "instance_id": "inst",
+        "app_version": "dev",
+    }
 
 
 async def test_api_reports_before_first_run(paths: Paths) -> None:
@@ -91,7 +98,9 @@ async def test_api_reports_before_first_run(paths: Paths) -> None:
         FakeRunner(),
         Installer(paths, FakeRunner()),
     )
-    async with TestClient(TestServer(server.api_app(collector, TOKEN))) as client:
+    async with TestClient(
+        TestServer(server.api_app(collector, TOKEN, "inst"))
+    ) as client:
         response = await client.get(
             "/api/v1/reports", headers={"Authorization": f"Bearer {TOKEN}"}
         )

@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import secrets
+import uuid
 
 from aiohttp import ClientSession, web
 
@@ -30,6 +31,15 @@ def load_token(paths: Paths) -> str:
     return token
 
 
+def load_instance_id(paths: Paths) -> str:
+    """Return this installation's ID, creating it on first start."""
+    if paths.instance_id.exists():
+        return paths.instance_id.read_text().strip()
+    instance_id = uuid.uuid4().hex
+    paths.instance_id.write_text(instance_id)
+    return instance_id
+
+
 async def main() -> None:
     """Start the servers, announce the app, then collect forever."""
     paths = default_paths()
@@ -44,10 +54,11 @@ async def main() -> None:
     runner = SubprocessRunner(paths.env(), cwd=str(paths.work))
     collector = Collector(options, paths, runner, Installer(paths, runner))
     token = load_token(paths)
+    instance_id = load_instance_id(paths)
 
     runners = []
     for app, port in (
-        (api_app(collector, token), API_PORT),
+        (api_app(collector, token, instance_id), API_PORT),
         (ingress_app(collector), INGRESS_PORT),
     ):
         app_runner = web.AppRunner(app, access_log=None)
