@@ -137,10 +137,10 @@ async def fetch_statistics(
 ) -> Iterable[tuple[float, float]]:
     """Return (period end timestamp, maximum) rows from the recorder."""
     # Imported here: the recorder is an optional (after-)dependency.
-    from homeassistant.helpers.recorder import get_instance  # noqa: PLC0415
     from homeassistant.components.recorder.statistics import (  # noqa: PLC0415
         statistics_during_period,
     )
+    from homeassistant.helpers.recorder import get_instance  # noqa: PLC0415
 
     result = await get_instance(hass).async_add_executor_job(
         statistics_during_period, hass, start, end, {entity_id}, period, None, {"max"}
