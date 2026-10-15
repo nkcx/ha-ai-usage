@@ -9,16 +9,17 @@ from unittest.mock import patch
 
 from freezegun.api import FrozenDateTimeFactory
 from homeassistant.const import STATE_OFF, STATE_ON, STATE_UNKNOWN
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, State
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.ai_usage.const import DOMAIN, SCAN_INTERVAL
-from custom_components.ai_usage.projections import fetch_statistics
+from custom_components.ai_usage.projections import fetch_states, fetch_statistics
 
 from .fake_app import COLLECTED, FakeApp
 
-FETCH = "custom_components.ai_usage.projections.fetch_statistics"
+STATES = "custom_components.ai_usage.projections.fetch_states"
+STATISTICS = "custom_components.ai_usage.projections.fetch_statistics"
 
 
 async def poll(hass: HomeAssistant) -> None:
@@ -59,64 +60,75 @@ async def test_without_recorder(
     assert hass.states.get("sensor.gemini_ai_credits_projected_at_reset") is None
 
 
-async def test_projection_from_statistics(
+async def test_projection_from_history(
     hass: HomeAssistant,
     frozen: FrozenDateTimeFactory,
     setup_entry: MockConfigEntry,
     fake_app: FakeApp,
 ) -> None:
-    """A heavy last hour in the 5-minute statistics: projected to run out."""
+    """A heavy last hour in the recorded states: projected to run out."""
     calls: list[tuple[str, str]] = []
+    now = COLLECTED + SCAN_INTERVAL
 
-    async def fake_fetch(
-        hass: HomeAssistant, entity_id: str, start: datetime, end: datetime, period: str
-    ) -> list[tuple[float, float]]:
-        calls.append((entity_id, period))
+    async def fake_states(
+        hass: HomeAssistant, entity_id: str, start: datetime, end: datetime
+    ) -> list[tuple[datetime, float | None]]:
+        calls.append((entity_id, "states"))
         if entity_id != "sensor.claude_session":
             return []
-        if period == "hour":
-            return rows(start, timedelta(hours=1), [0] * 10)
-        # 5 % every 5 minutes for the last hour.
-        return rows(end - timedelta(hours=1), timedelta(minutes=5), range(5, 61, 5))
+        # Reported every 5 minutes, 5 % more each time, for the last hour.
+        return [
+            (now - timedelta(minutes=60 - 5 * i), float(5 + 5 * i)) for i in range(12)
+        ]
+
+    async def fake_statistics(
+        hass: HomeAssistant, entity_id: str, start: datetime, end: datetime
+    ) -> list[tuple[float, float]]:
+        calls.append((entity_id, "hour"))
+        return rows(start, timedelta(hours=1), [0] * 10)
 
     hass.config.components.add("recorder")
     fake_app.set_meter("claude", "session", value=62)
-    fake_app.provider("claude")["report"]["collected_at"] = (
-        COLLECTED + SCAN_INTERVAL
-    ).isoformat()
+    fake_app.provider("claude")["report"]["collected_at"] = now.isoformat()
     frozen.tick(SCAN_INTERVAL)
-    with patch(FETCH, side_effect=fake_fetch):
+    with (
+        patch(STATES, side_effect=fake_states),
+        patch(STATISTICS, side_effect=fake_statistics),
+    ):
         await poll(hass)
 
     projected = hass.states.get("sensor.claude_session_projected_at_reset")
     assert float(projected.state) > 100
-    assert projected.attributes["current_rate"] == pytest.approx(60, abs=3)
+    assert projected.attributes["current_rate"] == pytest.approx(60, abs=5)
     assert hass.states.get("sensor.claude_session_runs_out").state != STATE_UNKNOWN
     assert (
         hass.states.get("binary_sensor.claude_session_projected_to_run_out").state
         == STATE_ON
     )
     assert ("sensor.claude_session", "hour") in calls
-    assert ("sensor.claude_session", "5minute") in calls
+    assert ("sensor.claude_session", "states") in calls
 
-    # No new report: projections are kept, statistics aren't read again.
+    # No new report: projections are kept, the recorder isn't read again.
     calls.clear()
-    with patch(FETCH, side_effect=fake_fetch):
+    with (
+        patch(STATES, side_effect=fake_states),
+        patch(STATISTICS, side_effect=fake_statistics),
+    ):
         await poll(hass)
     assert calls == []
-    assert (
-        float(hass.states.get("sensor.claude_session_projected_at_reset").state) > 100
-    )
 
-    # A new report in the same hour reads only the recent statistics again.
+    # A new report in the same hour reads only the recent states again.
     fake_app.provider("claude")["report"]["collected_at"] = (
-        COLLECTED + 2 * SCAN_INTERVAL
+        now + SCAN_INTERVAL
     ).isoformat()
     frozen.tick(SCAN_INTERVAL)
-    with patch(FETCH, side_effect=fake_fetch):
+    with (
+        patch(STATES, side_effect=fake_states),
+        patch(STATISTICS, side_effect=fake_statistics),
+    ):
         await poll(hass)
     assert ("sensor.claude_session", "hour") not in calls
-    assert ("sensor.claude_session", "5minute") in calls
+    assert ("sensor.claude_session", "states") in calls
 
 
 async def test_provider_turned_off(
@@ -132,7 +144,7 @@ async def test_provider_turned_off(
 
 
 class FakeRecorder:
-    """Runs the statistics query function and returns a canned result."""
+    """Records the recorder query and returns a canned result."""
 
     def __init__(self, result: dict[str, list[dict[str, Any]]]) -> None:
         self.result = result
@@ -144,16 +156,16 @@ class FakeRecorder:
 
 
 async def test_fetch_statistics(hass: HomeAssistant) -> None:
-    """Query the recorder for maxima; rows without one are skipped."""
+    """Query hourly maxima; rows without one are skipped."""
     recorder = FakeRecorder(
         {"sensor.x": [{"end": 1.0, "max": 5.0}, {"end": 2.0, "max": None}]}
     )
     start = COLLECTED - timedelta(hours=2)
     with patch("homeassistant.helpers.recorder.get_instance", return_value=recorder):
-        result = await fetch_statistics(hass, "sensor.x", start, COLLECTED, "hour")
-        assert list(result) == [(1.0, 5.0)]
-        empty = await fetch_statistics(hass, "sensor.y", start, COLLECTED, "5minute")
-        assert list(empty) == []
+        assert list(await fetch_statistics(hass, "sensor.x", start, COLLECTED)) == [
+            (1.0, 5.0)
+        ]
+        assert list(await fetch_statistics(hass, "sensor.y", start, COLLECTED)) == []
     assert recorder.calls[0] == (
         "statistics_during_period",
         start,
@@ -162,4 +174,31 @@ async def test_fetch_statistics(hass: HomeAssistant) -> None:
         "hour",
         None,
         {"max"},
+    )
+
+
+async def test_fetch_states(hass: HomeAssistant) -> None:
+    """Query recorded states; unknown and unavailable become gaps."""
+    states = [
+        State("sensor.x", "12.5", last_changed=COLLECTED),
+        State("sensor.x", "unavailable", last_changed=COLLECTED + timedelta(minutes=5)),
+        State("sensor.x", "unknown", last_changed=COLLECTED + timedelta(minutes=10)),
+        State("sensor.x", "garbage", last_changed=COLLECTED + timedelta(minutes=15)),
+    ]
+    recorder = FakeRecorder({"sensor.x": states})
+    start = COLLECTED - timedelta(hours=1)
+    with patch("homeassistant.helpers.recorder.get_instance", return_value=recorder):
+        result = list(await fetch_states(hass, "sensor.x", start, COLLECTED))
+    assert result == [
+        (COLLECTED, 12.5),
+        (COLLECTED + timedelta(minutes=5), None),
+        (COLLECTED + timedelta(minutes=10), None),
+        (COLLECTED + timedelta(minutes=15), None),
+    ]
+    assert recorder.calls[0] == (
+        "state_changes_during_period",
+        start,
+        COLLECTED,
+        "sensor.x",
+        True,
     )

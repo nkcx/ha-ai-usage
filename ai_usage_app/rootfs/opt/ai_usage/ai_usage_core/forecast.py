@@ -36,6 +36,8 @@ HOURS_PER_WEEK = 168
 RETENTION_HOURS = 8 * HOURS_PER_WEEK
 #: A gap longer than this between samples isn't attributed to any hour.
 MAX_GAP = 2 * HOUR
+#: An unchanged value over a longer stretch still means nothing was consumed.
+MAX_IDLE = 24 * HOUR
 #: A reset time moving forward by more than this means the window reset.
 RESET_TOLERANCE = 300
 
@@ -89,14 +91,24 @@ class History:
     last_reset: float | None = None
 
     def add_sample(
-        self, when: datetime, value: float, resets_at: datetime | None
+        self, when: datetime, value: float | None, resets_at: datetime | None
     ) -> None:
-        """Record a sample of the meter."""
+        """Record a sample of the meter; ``None`` marks a gap (value unknown).
+
+        Samples are reported values at the times they were reported. A value
+        that stayed the same is known to have consumed nothing, even over a
+        long stretch (the recorder only stores changes); a gap breaks the
+        chain, so the time around it stays unknown.
+        """
         now = when.timestamp()
+        if value is None:
+            self.last_time = self.last_value = self.last_reset = None
+            return
         reset = None if resets_at is None else resets_at.timestamp()
         if self.last_time is not None and self.last_value is not None:
             gap = now - self.last_time
-            if 0 < gap <= MAX_GAP:
+            unchanged = value == self.last_value and gap <= MAX_IDLE
+            if 0 < gap <= MAX_GAP or (gap > 0 and unchanged):
                 reset_happened = (
                     reset is not None
                     and self.last_reset is not None
@@ -301,7 +313,7 @@ def _next_hour(moment: datetime) -> datetime:
 
 
 def replay(
-    samples: Iterable[tuple[datetime, float, datetime | None]],
+    samples: Iterable[tuple[datetime, float | None, datetime | None]],
 ) -> History:
     """Build a history from (time, value, resets_at) samples (for backtests)."""
     history = History()

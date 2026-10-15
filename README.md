@@ -267,7 +267,7 @@ state_content:
                                             │ poll every 60 s
  ┌─────────────────── AI Usage integration (custom_components/ai_usage) ─────┐
  │ coordinator → devices + sensors per meter · repairs · diagnostics         │
- │ projections ← recorder statistics (hourly long-term, 5-minute short-term)  │
+ │ projections ← recorder: recorded states (last day) + hourly statistics     │
  └───────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -312,9 +312,11 @@ ships an identical copy, checked in CI.
 - A coordinator polls the app every 60 seconds. Errors raise repairs (provider
   needs signing in, tool failed to install), and devices of providers turned
   off are removed.
-- **Projections** (`core/forecast.py`): consumption per hour, from the hourly
-  maxima of each limit sensor's long-term statistics over the past 8 weeks,
-  the 5-minute maxima of the last 2 hours, and the latest value. An
+- **Projections** (`core/forecast.py`): consumption per hour, from each limit
+  sensor's recorded states over the last day (each value at the time it was
+  reported), the hourly maxima of its long-term statistics before that (up to
+  8 weeks), and the latest value. An unchanged value counts as no use (the
+  recorder only stores changes); an unavailable stretch stays unknown. An
   hour-of-week profile is averaged with weights halving every 2 weeks and
   pulled toward the hour-of-day average when there's little data. Hours
   without statistics are unknown, not zero. The current rate's deviation from

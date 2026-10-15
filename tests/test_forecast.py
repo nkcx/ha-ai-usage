@@ -200,3 +200,27 @@ def test_projection_heavy_day_above_typical() -> None:
         ForecastSettings(burst_half_life_hours=1e-6),
     )
     assert projection.at_reset > usual.at_reset
+
+
+def test_unchanged_value_is_known_idle() -> None:
+    """The recorder only stores changes: an unchanged value means no use."""
+    history = History()
+    history.add_sample(MONDAY, 40, None)
+    history.add_sample(MONDAY + timedelta(hours=8), 40, None)
+    assert sum(history.observed.values()) == pytest.approx(8 * 3600)
+    assert sum(history.increments.values()) == 0
+    # Beyond a day it's no longer trusted.
+    history.add_sample(MONDAY + timedelta(hours=40), 40, None)
+    assert sum(history.observed.values()) == pytest.approx(8 * 3600)
+
+
+def test_gap_marker_breaks_the_chain() -> None:
+    """An unknown stretch (sensor unavailable) isn't counted as idle or used."""
+    history = History()
+    history.add_sample(MONDAY, 10, None)
+    history.add_sample(MONDAY + timedelta(minutes=30), None, None)
+    history.add_sample(MONDAY + timedelta(minutes=90), 30, None)
+    assert history.increments == {}
+    assert history.observed == {}
+    history.add_sample(MONDAY + timedelta(minutes=100), 31, None)
+    assert sum(history.increments.values()) == pytest.approx(1)

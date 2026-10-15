@@ -1,26 +1,27 @@
-"""Projections from the recorder's statistics.
+"""Projections from the recorder's history of each usage sensor.
 
-The usage sensors have a state class, so the recorder already keeps their
-history as statistics: hourly long-term statistics (kept indefinitely,
-whatever ``purge_keep_days`` says) and 5-minute short-term statistics (kept
-for the purge period). Projections read those instead of keeping a second
-copy:
+The recorder already keeps the usage sensors' history, so projections read it
+instead of keeping a copy:
 
-* hourly maxima over the past weeks → the typical-week profile,
-* 5-minute maxima over the last hours → the current pace,
+* **recent** (the last day): the recorded states, i.e. each reported value at
+  the time it was reported. Precise timing matters here: it sets the current
+  pace.
+* **older** (up to 8 weeks): the hourly long-term statistics (kept
+  indefinitely, whatever ``purge_keep_days`` says). An hour's maximum is
+  plenty for the typical-week profile.
 * the latest reported value.
 
-Hours without statistics (Home Assistant down, sensor excluded) are unknown
-to the forecast, not idle.
+A value that stayed the same is known to have used nothing (the recorder only
+stores changes); an ``unavailable`` stretch or hours without statistics stay
+unknown, not idle.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterable
 from datetime import datetime, timedelta
-from typing import Literal
 
-from homeassistant.const import Platform
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
@@ -32,15 +33,16 @@ from .core.model import Meter, MeterKind
 type MeterId = tuple[str, str]
 """(provider, meter key)."""
 
-type Sample = tuple[datetime, float, datetime | None]
+type Sample = tuple[datetime, float | None, datetime | None]
+"""(time, value or None for "unknown from here", resets_at)."""
 
-#: Recent stretch read from 5-minute statistics (finer than hourly).
-RECENT = timedelta(hours=2)
+#: Recent stretch read from the recorded states (exact report times).
+RECENT = timedelta(days=1)
 HISTORY = timedelta(hours=RETENTION_HOURS)
 
 
 class Projections:
-    """Projects each usage window from its sensor's recorded statistics."""
+    """Projects each usage window from its sensor's recorded history."""
 
     def __init__(self, hass: HomeAssistant, instance_id: str) -> None:
         """Project the windows of the app installation ``instance_id``."""
@@ -83,41 +85,40 @@ class Projections:
             recent_start = now - RECENT
             hourly = await self._hourly_samples(entity_id, now)
             samples = [sample for sample in hourly if sample[0] <= recent_start]
-            samples += await self._samples(entity_id, recent_start, now, "5minute")
+            samples += await self._state_samples(entity_id, recent_start, now)
         samples.append((now, meter.value, meter.resets_at))
-        return project(
-            replay(sorted(samples, key=lambda s: s[0])),
-            meter.value,
-            meter.resets_at,
-            now,
-        )
+        samples.sort(key=lambda sample: sample[0])
+        return project(replay(samples), meter.value, meter.resets_at, now)
 
     async def _hourly_samples(self, entity_id: str, now: datetime) -> list[Sample]:
-        """Hourly maxima for the history window; refetched once per hour."""
+        """Hourly maxima over the history window; refetched once per hour."""
         hour = now.replace(minute=0, second=0, microsecond=0)
         cached = self._hourly.get(entity_id)
         if cached is None or cached[0] != hour:
-            samples = await self._samples(entity_id, hour - HISTORY, hour, "hour")
+            try:
+                rows = await fetch_statistics(
+                    self.hass, entity_id, hour - HISTORY, hour
+                )
+            except (KeyError, RuntimeError, ValueError) as err:  # pragma: no cover
+                LOGGER.debug("No statistics for %s: %s", entity_id, err)
+                rows = []
+            samples: list[Sample] = [
+                (datetime.fromtimestamp(end, now.tzinfo), maximum, None)
+                for end, maximum in rows
+            ]
             self._hourly[entity_id] = cached = (hour, samples)
         return cached[1]
 
-    async def _samples(
-        self,
-        entity_id: str,
-        start: datetime,
-        end: datetime,
-        period: Literal["5minute", "hour"],
+    async def _state_samples(
+        self, entity_id: str, start: datetime, end: datetime
     ) -> list[Sample]:
-        """Each statistics period's maximum, as a sample at the period's end."""
+        """Return reported values at their report times; unknown states as gaps."""
         try:
-            rows = await fetch_statistics(self.hass, entity_id, start, end, period)
+            states = await fetch_states(self.hass, entity_id, start, end)
         except (KeyError, RuntimeError, ValueError) as err:  # pragma: no cover
-            LOGGER.debug("No statistics for %s: %s", entity_id, err)
+            LOGGER.debug("No history for %s: %s", entity_id, err)
             return []
-        return [
-            (datetime.fromtimestamp(row_end, start.tzinfo), maximum, None)
-            for row_end, maximum in rows
-        ]
+        return [(when, value, None) for when, value in states]
 
 
 def _projectable(meter: Meter) -> bool:
@@ -128,22 +129,45 @@ def _projectable(meter: Meter) -> bool:
     )
 
 
-async def fetch_statistics(
-    hass: HomeAssistant,
-    entity_id: str,
-    start: datetime,
-    end: datetime,
-    period: Literal["5minute", "hour"],
-) -> Iterable[tuple[float, float]]:
-    """Return (period end timestamp, maximum) rows from the recorder."""
+def _number(state: str) -> float | None:
+    if state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
+        return None
+    try:
+        return float(state)
+    except ValueError:
+        return None
+
+
+async def fetch_states(
+    hass: HomeAssistant, entity_id: str, start: datetime, end: datetime
+) -> Iterable[tuple[datetime, float | None]]:
+    """Return (time, value) for each recorded state; None where unknown."""
     # Imported here: the recorder is an optional (after-)dependency.
+    from homeassistant.components.recorder.history import (  # noqa: PLC0415
+        state_changes_during_period,
+    )
+    from homeassistant.helpers.recorder import get_instance  # noqa: PLC0415
+
+    result = await get_instance(hass).async_add_executor_job(
+        state_changes_during_period, hass, start, end, entity_id, True
+    )
+    return [
+        (state.last_changed, _number(state.state))
+        for state in result.get(entity_id, [])
+    ]
+
+
+async def fetch_statistics(
+    hass: HomeAssistant, entity_id: str, start: datetime, end: datetime
+) -> Iterable[tuple[float, float]]:
+    """Return (period end timestamp, maximum) for each hour in the recorder."""
     from homeassistant.components.recorder.statistics import (  # noqa: PLC0415
         statistics_during_period,
     )
     from homeassistant.helpers.recorder import get_instance  # noqa: PLC0415
 
     result = await get_instance(hass).async_add_executor_job(
-        statistics_during_period, hass, start, end, {entity_id}, period, None, {"max"}
+        statistics_during_period, hass, start, end, {entity_id}, "hour", None, {"max"}
     )
     return [
         (row["end"], maximum)
