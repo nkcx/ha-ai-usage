@@ -53,8 +53,8 @@ passwords or session tokens; only the official tools do.
   Supervised). Without it, you can run the app's container yourself; see
   [Without the app system](#without-the-app-system).
 - A subscription with at least one provider.
-- About 50 MB per tool, except the Antigravity CLI (about 200 MB). Only the
-  tools you turn on are downloaded.
+- Disk space for the tools you turn on: about 700 MB for all three together.
+  Only the tools you turn on are downloaded, and backups leave them out.
 
 ## Installation
 

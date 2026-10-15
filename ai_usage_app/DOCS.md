@@ -17,8 +17,8 @@ its sign-in in the app's storage.
 
 1. On the **Configuration** tab, turn on the providers you use and save.
    Only those tools are downloaded, with each vendor's official installer.
-   The first start can take a few minutes; the Antigravity CLI alone is about
-   200 MB.
+   The first start can take a few minutes: all three tools together take
+   about 700 MB.
 2. Start the app and open its page (**Open web UI**, or **AI Usage** in the
    sidebar).
 3. For each provider, select **Sign in** and follow the tool's own steps:
