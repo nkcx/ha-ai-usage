@@ -39,11 +39,13 @@ class GeminiSource(CliSource):
         self,
     ) -> tuple[Account | None, list[Meter], str | None, dict[str, Any]]:
         usage = await self.runner.run(
-            (self.command, *USAGE), time_limit=COMMAND_TIMEOUT
+            (self.command, *USAGE), time_limit=COMMAND_TIMEOUT, abort_on=(AUTH_PROMPT,)
         )
         meters = parse_usage(_command_data(usage.stdout, usage.stderr, "usage"))
         credits_result = await self.runner.run(
-            (self.command, *CREDITS), time_limit=COMMAND_TIMEOUT
+            (self.command, *CREDITS),
+            time_limit=COMMAND_TIMEOUT,
+            abort_on=(AUTH_PROMPT,),
         )
         meters.extend(
             parse_credits(

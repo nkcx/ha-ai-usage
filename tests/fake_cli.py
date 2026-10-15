@@ -47,6 +47,7 @@ class FakeRunner:
         self.rpc = rpc or {}
         self.installed = installed
         self.calls: list[tuple[str, ...]] = []
+        self.abort_on: dict[tuple[str, ...], tuple[str, ...]] = {}
 
     async def run(
         self, argv: Sequence[str], *, time_limit: float, abort_on: Sequence[str] = ()
@@ -54,6 +55,7 @@ class FakeRunner:
         """Return the recorded result for ``argv``."""
         key = tuple(argv)
         self.calls.append(key)
+        self.abort_on[key] = tuple(abort_on)
         if not self.installed:
             raise CommandNotFoundError(argv[0])
         reply = self.runs[key]

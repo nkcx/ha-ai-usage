@@ -291,6 +291,16 @@ async def test_gemini_auth_prompt() -> None:
     assert report.error == "The Antigravity CLI is not signed in"
 
 
+async def test_gemini_stops_at_auth_prompt() -> None:
+    """Both agy calls ask the runner to stop at the sign-in prompt."""
+    runner = gemini_runner()
+    await GeminiSource(runner).collect()
+    assert runner.abort_on == {
+        AGY_USAGE: ("Authentication required",),
+        AGY_CREDITS: ("Authentication required",),
+    }
+
+
 @pytest.mark.parametrize(
     "usage",
     [
