@@ -60,6 +60,10 @@ passwords or session tokens; only the official tools do.
 
 ### 1. The app
 
+[![Open your Home Assistant instance and show the AI Usage app, adding its repository.](https://my.home-assistant.io/badges/supervisor_addon.svg)](https://my.home-assistant.io/redirect/supervisor_addon/?addon=425b2f89_ai_usage&repository_url=https%3A%2F%2Fgithub.com%2Fnkcx%2Fha-ai-usage)
+
+Or by hand:
+
 1. **Settings → Apps → App store → ⋮ → Repositories**, add
    `https://github.com/nkcx/ha-ai-usage`.
 2. Install **AI Usage**.
@@ -68,6 +72,10 @@ passwords or session tokens; only the official tools do.
    minutes.
 
 ### 2. The integration
+
+[![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=nkcx&repository=ha-ai-usage&category=integration)
+
+Or by hand:
 
 1. In HACS, **⋮ → Custom repositories**, add
    `https://github.com/nkcx/ha-ai-usage` as an **Integration**.

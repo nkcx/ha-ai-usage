@@ -11,7 +11,6 @@ from homeassistant.helpers.typing import ConfigType
 from .api import AppClient
 from .const import CONF_APP_SLUG, DOMAIN
 from .coordinator import AiUsageConfigEntry, AiUsageCoordinator
-from .history import UsageHistory
 
 PLATFORMS = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.SENSOR]
 
@@ -31,9 +30,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: AiUsageConfigEntry) -> b
         entry.data[CONF_PORT],
         entry.data[CONF_API_TOKEN],
     )
-    history = UsageHistory(hass, entry.entry_id)
-    await history.async_load()
-    coordinator = AiUsageCoordinator(hass, entry, client, history)
+    coordinator = AiUsageCoordinator(hass, entry, client)
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
 
@@ -56,11 +53,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: AiUsageConfigEntry) -> b
 async def async_unload_entry(hass: HomeAssistant, entry: AiUsageConfigEntry) -> bool:
     """Disconnect from the app."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-
-
-async def async_remove_entry(hass: HomeAssistant, entry: AiUsageConfigEntry) -> None:
-    """Delete the usage history kept for projections."""
-    await UsageHistory(hass, entry.entry_id).async_remove()
 
 
 async def async_remove_config_entry_device(

@@ -12,7 +12,7 @@ from .api import AppAuthError, AppClient, AppConnectionError, AppSnapshot
 from .const import CONF_APP_SLUG, DOMAIN, LOGGER, PROVIDERS, SCAN_INTERVAL
 from .core.forecast import Projection
 from .core.model import Status
-from .history import MeterId, UsageHistory
+from .projections import MeterId, Projections
 
 type AiUsageConfigEntry = ConfigEntry[AiUsageCoordinator]
 
@@ -27,7 +27,6 @@ class AiUsageCoordinator(DataUpdateCoordinator[AppSnapshot]):
         hass: HomeAssistant,
         entry: AiUsageConfigEntry,
         client: AppClient,
-        history: UsageHistory,
     ) -> None:
         """Poll ``client`` for ``entry``."""
         super().__init__(
@@ -38,8 +37,8 @@ class AiUsageCoordinator(DataUpdateCoordinator[AppSnapshot]):
             update_interval=SCAN_INTERVAL,
         )
         self.client = client
-        self.history = history
         self.projections: dict[MeterId, Projection] = {}
+        self._projector: Projections | None = None
         self.hub_device_id = ""
         """Device registry ID of the app's device (set during setup)."""
 
@@ -64,7 +63,9 @@ class AiUsageCoordinator(DataUpdateCoordinator[AppSnapshot]):
             ) from err
         self._update_issues(snapshot)
         self._remove_stale_devices(snapshot)
-        self.projections = self.history.update(snapshot)
+        if self._projector is None:
+            self._projector = Projections(self.hass, self.instance_id)
+        self.projections = await self._projector.async_update(snapshot)
         return snapshot
 
     def _update_issues(self, snapshot: AppSnapshot) -> None:

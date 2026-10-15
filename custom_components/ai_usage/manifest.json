@@ -2,7 +2,8 @@
   "domain": "ai_usage",
   "name": "AI Usage",
   "after_dependencies": [
-    "hassio"
+    "hassio",
+    "recorder"
   ],
   "codeowners": [
     "@nkcx"
