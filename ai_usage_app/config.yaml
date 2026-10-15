@@ -1,5 +1,5 @@
 name: AI Usage
-version: "0.1.0"
+version: "0.1.1"
 slug: ai_usage
 description: Reads your AI subscription usage (Claude, Gemini, Codex) from the official CLIs for the AI Usage integration
 url: https://github.com/nkcx/ha-ai-usage

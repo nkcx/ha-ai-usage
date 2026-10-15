@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime, timedelta
+import gzip
 from pathlib import Path
 
 from aiohttp import WSMsgType, web
@@ -138,8 +139,15 @@ async def fake_ttyd() -> AsyncIterator[TestServer]:
                 await ws.send_bytes(message.data[::-1])
         return ws
 
+    async def gzipped(request: web.Request) -> web.Response:
+        return web.Response(
+            body=gzip.compress(b"<html>terminal</html>"),
+            headers={"Content-Encoding": "gzip", "Content-Type": "text/html"},
+        )
+
     app = web.Application()
     app.router.add_get("/term/ws", socket)
+    app.router.add_get("/term/gz", gzipped)
     app.router.add_route("*", "/term/{tail:.*}", page)
     async with TestServer(app) as ttyd:
         yield ttyd
@@ -185,6 +193,15 @@ async def test_terminal_http(ingress: TestClient[web.Request, web.Application]) 
     assert response.status == 200
     assert await response.text() == "ttyd /term/?arg=claude"
     assert response.headers["X-Upstream"] == "1"
+
+
+async def test_terminal_compressed(
+    ingress: TestClient[web.Request, web.Application],
+) -> None:
+    """The gzipped terminal page reaches the browser still marked as gzip."""
+    response = await ingress.get("/term/gz")
+    assert response.headers["Content-Encoding"] == "gzip"
+    assert await response.text() == "<html>terminal</html>"
 
 
 async def test_terminal_websocket(

@@ -38,8 +38,9 @@ _HOP_HEADERS = {
     "upgrade",
     "host",
     "content-length",
-    "content-encoding",
 }
+# Content-Encoding passes through: bodies are relayed still compressed (ttyd
+# serves its page gzipped), so the browser must be told how to decode them.
 
 
 # Usage API
