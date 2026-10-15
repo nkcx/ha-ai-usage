@@ -70,7 +70,7 @@ class AiUsageCoordinator(DataUpdateCoordinator[AppSnapshot]):
     def _update_issues(self, snapshot: AppSnapshot) -> None:
         """Raise a repair when a provider needs signing in or failed to install."""
         slug = self.config_entry.data.get(CONF_APP_SLUG)
-        link = f"/hassio/ingress/{slug}" if slug else None
+        link = f"/app/{slug}" if slug else None
         for provider, info in PROVIDERS.items():
             state = snapshot.providers.get(provider)
             enabled = state is not None and state.enabled

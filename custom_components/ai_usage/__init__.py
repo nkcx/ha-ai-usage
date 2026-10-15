@@ -46,7 +46,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: AiUsageConfigEntry) -> b
         model="AI Usage app",
         sw_version=coordinator.data.app_version,
         entry_type=dr.DeviceEntryType.SERVICE,
-        configuration_url=f"homeassistant://hassio/addon/{slug}/info" if slug else None,
+        configuration_url=f"homeassistant://config/app/{slug}/info" if slug else None,
     )
     coordinator.hub_device_id = hub.id
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

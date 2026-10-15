@@ -47,9 +47,7 @@ async def test_setup_and_unload(
     )
     assert hub is not None
     assert hub.sw_version == "0.1.0"
-    assert (
-        hub.configuration_url == "homeassistant://hassio/addon/425b2f89_ai_usage/info"
-    )
+    assert hub.configuration_url == "homeassistant://config/app/425b2f89_ai_usage/info"
     claude = device_registry.async_get_device_by_identifier(
         (DOMAIN, f"{INSTANCE_ID}_claude"), setup_entry.entry_id
     )
@@ -139,7 +137,7 @@ async def test_repairs(
         "cli": "Codex CLI",
         "error": "",
     }
-    assert signed_out.learn_more_url == "/hassio/ingress/425b2f89_ai_usage"
+    assert signed_out.learn_more_url == "/app/425b2f89_ai_usage"
 
     fake_app.provider("gemini")["install_error"] = "HTTP 404"
     fake_app.provider("codex")["enabled"] = False
