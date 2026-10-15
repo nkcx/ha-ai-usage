@@ -126,11 +126,20 @@ async def test_claude_extra_usage_and_unknown_limit() -> None:
     assert extra.unit == "EUR"
 
 
-async def test_claude_no_limits() -> None:
+async def test_claude_no_limits_free_plan() -> None:
     """Free plans report no rate limits: an empty, successful report."""
-    report = await ClaudeSource(claude_runner(usage=usage_lines(None))).collect()
+    auth = json.loads(fixture("claude_auth.json")) | {"subscriptionType": "free"}
+    runner = claude_runner(auth=auth, usage=usage_lines(None))
+    report = await ClaudeSource(runner).collect()
     assert report.status is Status.OK
     assert report.meters == ()
+
+
+async def test_claude_no_limits_paid_plan() -> None:
+    """A paid plan without limits means Claude Code couldn't fetch them."""
+    report = await ClaudeSource(claude_runner(usage=usage_lines(None))).collect()
+    assert report.status is Status.ERROR
+    assert report.error == "Claude Code returned no usage limits for the max plan"
 
 
 @pytest.mark.parametrize(

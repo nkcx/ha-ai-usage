@@ -75,7 +75,6 @@ class Paths:
             "AGY_CLI_DISABLE_AUTO_UPDATE": "true",
             # Claude Code on Alpine uses the system ripgrep.
             "USE_BUILTIN_RIPGREP": "0",
-            "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
         }
 
     def ensure(self) -> None:

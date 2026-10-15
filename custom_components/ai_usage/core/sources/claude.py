@@ -18,6 +18,8 @@ AUTH_STATUS = ("auth", "status", "--json")
 USAGE = ("-p", "/usage", "--output-format", "stream-json", "--verbose")
 
 _WINDOWS = {"session": FIVE_HOURS, "weekly": ONE_WEEK}
+#: Plans without usage limits (``subscriptionType``); others always have some.
+FREE_PLANS = {None, "free"}
 
 
 class ClaudeSource(CliSource):
@@ -37,6 +39,13 @@ class ClaudeSource(CliSource):
             (self.command, *USAGE), time_limit=COMMAND_TIMEOUT
         )
         meters, version, extra = parse_usage(usage.stdout)
+        if not meters and account.plan not in FREE_PLANS:
+            # A paid plan always has limits; none means Claude Code couldn't
+            # fetch them (it reports no error of its own).
+            raise SourceError(
+                Status.ERROR,
+                f"Claude Code returned no usage limits for the {account.plan} plan",
+            )
         return account, meters, version, extra
 
 
