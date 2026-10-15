@@ -9,11 +9,17 @@ from typing import Any
 NAMES = {"claude": "Claude", "gemini": "Gemini", "codex": "Codex"}
 CLIS = {"claude": "Claude Code", "gemini": "Antigravity CLI", "codex": "Codex CLI"}
 SIGN_IN_HELP = {
-    "claude": "Opens Claude Code's sign-in. Open the link it shows, approve, then paste the code back.",
-    "gemini": "Starts the Antigravity CLI. Follow its sign-in prompts, then type /exit.",
+    "claude": (
+        "Opens Claude Code's sign-in: open the link, approve, then paste the code "
+        "back and press Enter. The pasted code isn't shown on screen."
+    ),
+    "gemini": (
+        "Opens the Antigravity CLI's sign-in: open the link, approve, paste the code "
+        "back and press Enter, then type /exit."
+    ),
     "codex": (
-        "Starts a device-code sign-in: open the link, enter the code. Device-code sign-in must "
-        "be enabled in ChatGPT → Settings → Security."
+        "Starts a device-code sign-in: open the link, enter the code. Device-code "
+        "sign-in must be enabled in ChatGPT → Settings → Security."
     ),
 }
 STATUS_TEXT = {

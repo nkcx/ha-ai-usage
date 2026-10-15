@@ -5,24 +5,50 @@ cd /data/work || exit 1
 refresh() {
     curl -fsS -X POST -H "Authorization: Bearer $(cat /data/api_token)" \
         http://127.0.0.1:8080/api/v1/refresh >/dev/null \
-        && echo "Usage will be checked again now."
+        && echo "Signed in. Usage will be checked again now."
+}
+
+# Run a sign-in command until it succeeds or the user gives up (Ctrl+C).
+sign_in() {
+    until "$@"; do
+        echo
+        read -r -p "Sign-in didn't complete. Press Enter to try again, or Ctrl+C to stop. " _ || return 1
+    done
+    refresh
+}
+
+paste_help() {
+    echo "  Paste with Ctrl+V (Cmd+V on a Mac) or right-click -> Paste, then press Enter."
+    echo "  The pasted code may not be shown on screen: that's normal."
 }
 
 case "${1:-shell}" in
     claude)
         echo "Signing in to Claude Code with your Claude subscription."
         echo
-        claude auth login --claudeai && refresh
+        echo "  1. Open the link below (it opens in a new tab) and approve."
+        echo "  2. Copy the code it shows and paste it at the prompt here."
+        paste_help
+        echo
+        sign_in claude auth login --claudeai
         ;;
     gemini)
-        echo "Starting the Antigravity CLI. Sign in when it asks, then type /exit."
+        echo "Signing in to the Antigravity CLI with your Google account."
         echo
-        agy && refresh
+        echo "  1. Open the link below (it opens in a new tab) and approve."
+        echo "  2. Copy the code it shows and paste it at the prompt here."
+        paste_help
+        echo "  3. Once the Antigravity CLI is running, type /exit and press Enter."
+        echo
+        sign_in agy
         ;;
     codex)
         echo "Signing in to Codex with your ChatGPT account (device code)."
         echo
-        codex login --device-auth && refresh
+        echo "  Device-code sign-in must be enabled first: ChatGPT -> Settings -> Security."
+        echo "  Then open the link below and enter the code shown here."
+        echo
+        sign_in codex login --device-auth
         ;;
     *) ;;
 esac
