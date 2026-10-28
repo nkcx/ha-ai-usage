@@ -66,8 +66,11 @@ async def test_client_errors(fake_app: FakeApp, socket_enabled: None) -> None:
 
 
 async def test_client_not_json(socket_enabled: None) -> None:
+    async def not_json(_: web.Request) -> web.Response:
+        return web.Response(text="<html>")
+
     app = web.Application()
-    app.router.add_get("/api/v1/reports", lambda _: web.Response(text="<html>"))
+    app.router.add_get("/api/v1/reports", not_json)
     async with TestServer(app) as server, ClientSession() as session:
         client = AppClient(session, "127.0.0.1", server.port, TOKEN)
         with pytest.raises(AppConnectionError):
